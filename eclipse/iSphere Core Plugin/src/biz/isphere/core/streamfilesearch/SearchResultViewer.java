@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2022 iSphere Project Owners
+ * Copyright (c) 2012-2024 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,12 @@
 
 package biz.isphere.core.streamfilesearch;
 
+import java.sql.Connection;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -47,8 +50,10 @@ import org.eclipse.swt.widgets.TableColumn;
 import biz.isphere.base.internal.ClipboardHelper;
 import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.base.internal.IResizableTableColumnsViewer;
+import biz.isphere.base.internal.UIHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.DateTimeHelper;
 import biz.isphere.core.internal.FilterDialog;
 import biz.isphere.core.internal.IStreamFileEditor;
@@ -305,6 +310,8 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
         private MenuItem menuItemInvertSelection;
         private MenuItem menuCopySelected;
         private MenuItem menuItemRemove;
+        private MenuItem menuItemSeparator1;
+        private MenuItem menuStreamFileSearch;
         private MenuItem menuItemSeparator2;
         private MenuItem menuCreateFilterFromSelectedStreamFiles;
         private MenuItem menuExportSelectedStreamFilesToExcel;
@@ -328,6 +335,8 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
             dispose(menuItemInvertSelection);
             dispose(menuCopySelected);
             dispose(menuItemRemove);
+            dispose(menuItemSeparator1);
+            dispose(menuStreamFileSearch);
             dispose(menuItemSeparator2);
             dispose(menuCreateFilterFromSelectedStreamFiles);
             dispose(menuExportSelectedStreamFilesToExcel);
@@ -413,6 +422,18 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
                     @Override
                     public void widgetSelected(SelectionEvent e) {
                         executeMenuItemRemoveSelectedItems();
+                    }
+                });
+
+                menuItemSeparator1 = new MenuItem(menuTableStreamFiles, SWT.SEPARATOR);
+
+                menuStreamFileSearch = new MenuItem(menuTableStreamFiles, SWT.NONE);
+                menuStreamFileSearch.setText(Messages.iSphere_Stream_File_Search);
+                menuStreamFileSearch.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_SOURCE_FILE_SEARCH));
+                menuStreamFileSearch.addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(SelectionEvent e) {
+                        executeMenuItemStreamFileSearch();
                     }
                 });
 
@@ -770,6 +791,37 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
         return date + " " + time;
     }
 
+    private void executeMenuItemStreamFileSearch() {
+
+        HashMap<String, SearchElement> _searchElements = new LinkedHashMap<String, SearchElement>();
+
+        for (int i = 0; i < selectedItemsStreamFiles.length; i++) {
+            SearchResult searchResult = (SearchResult)selectedItemsStreamFiles[i];
+            SearchElement _searchElement = new SearchElement(searchResult);
+            _searchElements.put(_searchElement.getKey(), _searchElement);
+        }
+
+        SearchDialog dialog = new SearchDialog(getShell(), _searchElements, true);
+        if (dialog.open() == Dialog.OK) {
+
+            SearchOptions searchOptions = dialog.getSearchOptions();
+            ArrayList<SearchElement> selectedElements = dialog.getSelectedElements();
+
+            SearchPostRun postRun = new SearchPostRun();
+            postRun.setConnection(null);
+            postRun.setConnectionName(connectionName);
+            postRun.setSearchString(searchOptions.getCombinedSearchString());
+            postRun.setSearchElements(_searchElements);
+            postRun.setWorkbenchWindow(UIHelper.getActivePage().getWorkbenchWindow());
+
+            Connection jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(connectionName);
+            SearchExec searchExec = new SearchExec();
+            searchExec.execute(connectionName, jdbcConnection, searchOptions, selectedElements, postRun);
+
+        }
+
+    }
+
     private void executeMenuItemCreateFilterFromSelectedStreamFiles() {
 
         IStreamFileSearchIFSFilterCreator creator = ISpherePlugin.getStreamFileSearchIFSFilterCreator();
@@ -781,7 +833,7 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
                 _selectedStreamFiles[i] = (SearchResult)selectedItemsStreamFiles[i];
             }
 
-            FilterDialog dialog = new FilterDialog(shell, RSEFilter.TYPE_MEMBER);
+            FilterDialog dialog = new FilterDialog(getShell(), RSEFilter.TYPE_MEMBER);
             dialog.setFilterPools(creator.getFilterPools(getConnectionName()));
             if (dialog.open() == Dialog.OK) {
                 if (!creator.createIFSFilter(getConnectionName(), dialog.getFilterPool(), dialog.getFilter(), dialog.getFilterUpdateType(),
@@ -798,7 +850,7 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
             _selectedStreamFiles[i] = (SearchResult)selectedItemsStreamFiles[i];
         }
 
-        StreamFileToExcelExporter exporter = new StreamFileToExcelExporter(shell, getSearchOptions(), _selectedStreamFiles);
+        StreamFileToExcelExporter exporter = new StreamFileToExcelExporter(getShell(), getSearchOptions(), _selectedStreamFiles);
         if (_selectedStreamFiles.length != getSearchResults().length) {
             exporter.setPartialExport(true);
         }
@@ -892,6 +944,10 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
     public void resetColumnWidths() {
         getDialogSettingsManager().resetColumnWidths(tableStreamFiles);
         getDialogSettingsManager().resetColumnWidths(tableStatements);
+    }
+
+    private Shell getShell() {
+        return shell;
     }
 
     private DialogSettingsManager getDialogSettingsManager() {

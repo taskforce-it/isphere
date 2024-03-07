@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2024 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,13 @@ public class SearchElement implements Comparable<SearchElement> {
         directory = "";
         streamFile = "";
         type = "";
+        data = null;
+    }
+
+    public SearchElement(SearchResult searchResult) {
+        directory = searchResult.getDirectory();
+        streamFile = searchResult.getStreamFile();
+        type = searchResult.getType();
         data = null;
     }
 
@@ -71,6 +78,15 @@ public class SearchElement implements Comparable<SearchElement> {
 
     public void setData(Object data) {
         this.data = data;
+    }
+
+    public String getKey() {
+        return produceKey(directory, streamFile);
+    }
+
+    public static String produceKey(String directory, String file) {
+        String key = directory + "/" + file; //$NON-NLS-1$
+        return key;
     }
 
     public static void setSearchElements(String iSphereLibrary, Connection jdbcConnection, int handle, ArrayList<SearchElement> _searchElements) {

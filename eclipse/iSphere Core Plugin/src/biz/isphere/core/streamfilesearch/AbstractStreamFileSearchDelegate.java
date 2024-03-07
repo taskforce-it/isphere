@@ -136,7 +136,7 @@ public abstract class AbstractStreamFileSearchDelegate {
     }
 
     private void addSearchElement(Map<String, SearchElement> searchElements, SearchElement aSearchElement) {
-        String tKey = aSearchElement.getDirectory() + "/" + aSearchElement.getStreamFile(); //$NON-NLS-1$ //$NON-NLS-2$
+        String tKey = SearchElement.produceKey(aSearchElement.getDirectory(), aSearchElement.getStreamFile());
         if (!searchElements.containsKey(tKey)) {
             searchElements.put(tKey, aSearchElement);
         }

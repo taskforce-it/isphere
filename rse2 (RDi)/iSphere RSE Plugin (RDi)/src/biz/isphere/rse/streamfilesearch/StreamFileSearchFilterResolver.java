@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2022 iSphere Project Owners
+ * Copyright (c) 2012-2024 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -108,7 +108,7 @@ public class StreamFileSearchFilterResolver {
 
     private void addElement(IFSRemoteFile element) {
 
-        String key = element.getAbsolutePathPlusConnection();
+        String key = SearchElement.produceKey(element.getParentName(), element.getName());
 
         if (!_searchElements.containsKey(key)) {
 
