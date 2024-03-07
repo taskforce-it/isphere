@@ -9,6 +9,8 @@ Changelog: iSphere 5.2.10.b003
    File Search result view.
  • Added option 'iSphere Stream File Search' to the iSphere Stream
    File Search result view.
+ • Changed upload dialog to allow multiple uploads of the iSphere
+   library.
  • Remove iSphere Compare Filters plug-in. Class
    IgnoreDateCompareFilter has been moved to the iSphere Core
     plug-in.

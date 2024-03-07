@@ -361,6 +361,7 @@ public class TransferISphereLibrary extends XDialog implements StatusMessageRece
     private void clearStatus() {
         tableStatus.removeAll();
         tableStatus.update();
+        buttonJobLog.setVisible(false);
     }
 
     public void setStatus(String message) {
@@ -479,8 +480,8 @@ public class TransferISphereLibrary extends XDialog implements StatusMessageRece
             uploader.setStatusMessageReceiver(TransferISphereLibrary.this);
 
             if (uploader.run()) {
-                comboConnections.setEnabled(false);
-                buttonStart.setEnabled(false);
+                comboConnections.setEnabled(true);
+                buttonStart.setEnabled(true);
                 buttonClose.setFocus();
             } else {
                 comboConnections.setEnabled(true);
