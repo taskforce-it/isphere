@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2022 iSphere Project Owners
+ * Copyright (c) 2012-2024 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -109,7 +109,7 @@ public class SourceFileSearchFilterResolver {
         String file = ((IQSYSMember)element).getFile();
         String member = element.getName();
 
-        String key = library + "-" + file + "-" + member; //$NON-NLS-1$ //$NON-NLS-2$
+        String key = SearchElement.produceKey(library, file, member);
 
         if (!_searchElements.containsKey(key)) {
 

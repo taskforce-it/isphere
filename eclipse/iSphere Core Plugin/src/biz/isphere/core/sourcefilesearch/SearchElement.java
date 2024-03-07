@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2024 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,11 +38,21 @@ public class SearchElement {
         data = null;
     }
 
+    public SearchElement(SearchResult searchResult) {
+        library = searchResult.getLibrary();
+        file = searchResult.getFile();
+        member = searchResult.getMember();
+        type = searchResult.getSrcType();
+        description = searchResult.getDescription();
+        data = null;
+    }
+
     @Deprecated
     @CMOne(info = "Deprecated but required for compiling CMOne.")
     public void setLastChangedDate(Date lastChangedDate) {
         // throw new
-        // IllegalAccessError("Don't call setLastChangedDate()! This method has become obsolete with rev. 6056.");
+        // IllegalAccessError("Don't call setLastChangedDate()! This method has
+        // become obsolete with rev. 6056.");
     }
 
     public String getLibrary() {
@@ -93,6 +103,15 @@ public class SearchElement {
         this.data = data;
     }
 
+    public String getKey() {
+        return produceKey(library, file, member);
+    }
+
+    public static String produceKey(String library, String file, String member) {
+        String key = library + "-" + file + "-" + member; //$NON-NLS-1$ //$NON-NLS-2$
+        return key;
+    }
+
     public static void setSearchElements(String iSphereLibrary, Connection jdbcConnection, int handle, ArrayList<SearchElement> _searchElements) {
 
         // String _separator;
@@ -100,7 +119,8 @@ public class SearchElement {
         // _separator = jdbcConnection.getMetaData().getCatalogSeparator();
         // } catch (SQLException e) {
         // _separator = ".";
-        // ISpherePlugin.logError("*** Source file search, setSearchElements(): Could not get JDBC meta data. Using '.' as SQL separator ***",
+        // ISpherePlugin.logError("*** Source file search, setSearchElements():
+        // Could not get JDBC meta data. Using '.' as SQL separator ***",
         // e);
         // }
 

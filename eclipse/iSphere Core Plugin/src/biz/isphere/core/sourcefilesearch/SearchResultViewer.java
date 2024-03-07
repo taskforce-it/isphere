@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2019 iSphere Project Owners
+ * Copyright (c) 2012-2024 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,14 @@
 
 package biz.isphere.core.sourcefilesearch;
 
+import java.sql.Connection;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -50,6 +53,7 @@ import biz.isphere.base.internal.ClipboardHelper;
 import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.IResizableTableColumnsViewer;
+import biz.isphere.base.internal.UIHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
@@ -66,7 +70,7 @@ import biz.isphere.core.sourcemembercopy.rse.CopyMemberService;
 
 public class SearchResultViewer implements IResizableTableColumnsViewer {
 
-    private String connectionName;
+    private String qualifiedConnectionName;
     private String searchString;
     private SearchResult[] _searchResults;
     private SearchOptions _searchOptions;
@@ -335,7 +339,7 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
                 IEditor editor = ISpherePlugin.getEditor();
 
                 if (editor != null) {
-                    editor.openEditor(connectionName, _searchResult.getLibrary(), _searchResult.getFile(), _searchResult.getMember(), 0,
+                    editor.openEditor(qualifiedConnectionName, _searchResult.getLibrary(), _searchResult.getFile(), _searchResult.getMember(), 0,
                         getEditMode());
                 }
             }
@@ -354,6 +358,7 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
         private MenuItem menuItemRemove;
         private MenuItem menuItemSeparator1;
         private MenuItem menuCopySelectedMembers;
+        private MenuItem menuSourceFileSearch;
         private MenuItem menuCompareSelectedMembers;
         private MenuItem menuItemSeparator2;
         private MenuItem menuCreateFilterFromSelectedMembers;
@@ -380,6 +385,7 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
             dispose(menuItemRemove);
             dispose(menuItemSeparator1);
             dispose(menuCopySelectedMembers);
+            dispose(menuSourceFileSearch);
             dispose(menuCompareSelectedMembers);
             dispose(menuItemSeparator2);
             dispose(menuCreateFilterFromSelectedMembers);
@@ -483,6 +489,16 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
                         }
                     });
 
+                    menuSourceFileSearch = new MenuItem(menuTableMembers, SWT.NONE);
+                    menuSourceFileSearch.setText(Messages.iSphere_Source_File_Search);
+                    menuSourceFileSearch.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_SOURCE_FILE_SEARCH));
+                    menuSourceFileSearch.addSelectionListener(new SelectionAdapter() {
+                        @Override
+                        public void widgetSelected(SelectionEvent e) {
+                            executeMenuItemSourceFileSearch();
+                        }
+                    });
+
                     menuCompareSelectedMembers = new MenuItem(menuTableMembers, SWT.NONE);
                     menuCompareSelectedMembers.setText(Messages.Menu_Compare_source_members);
                     menuCompareSelectedMembers.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_COMPARE));
@@ -545,7 +561,7 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
 
                     IEditor editor = ISpherePlugin.getEditor();
                     if (editor != null) {
-                        editor.openEditor(connectionName, _searchResult.getLibrary(), _searchResult.getFile(), _searchResult.getMember(),
+                        editor.openEditor(qualifiedConnectionName, _searchResult.getLibrary(), _searchResult.getFile(), _searchResult.getMember(),
                             statementLine, getEditMode());
                     }
                 }
@@ -605,8 +621,8 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
         }
     }
 
-    public SearchResultViewer(String connectionName, String searchString, SearchResult[] _searchResults, SearchOptions _searchOptions) {
-        this.connectionName = connectionName;
+    public SearchResultViewer(String qualifiedConnectionName, String searchString, SearchResult[] _searchResults, SearchOptions _searchOptions) {
+        this.qualifiedConnectionName = qualifiedConnectionName;
         this.searchString = searchString;
         this._searchResults = _searchResults;
         this._searchOptions = _searchOptions;
@@ -794,7 +810,7 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
             for (int idx = 0; idx < selectedItemsMembers.length; idx++) {
 
                 SearchResult _searchResult = (SearchResult)selectedItemsMembers[idx];
-                editor.openEditor(connectionName, _searchResult.getLibrary(), _searchResult.getFile(), _searchResult.getMember(), statement,
+                editor.openEditor(qualifiedConnectionName, _searchResult.getLibrary(), _searchResult.getFile(), _searchResult.getMember(), statement,
                     IEditor.EDIT);
             }
         }
@@ -809,7 +825,7 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
             for (int idx = 0; idx < selectedItemsMembers.length; idx++) {
 
                 SearchResult _searchResult = (SearchResult)selectedItemsMembers[idx];
-                editor.openEditor(connectionName, _searchResult.getLibrary(), _searchResult.getFile(), _searchResult.getMember(), statement,
+                editor.openEditor(qualifiedConnectionName, _searchResult.getLibrary(), _searchResult.getFile(), _searchResult.getMember(), statement,
                     IEditor.DISPLAY);
             }
         }
@@ -881,7 +897,7 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
 
     private void executeMenuItemCopySelectedMembers() {
 
-        CopyMemberService jobDescription = new CopyMemberService(getShell(), connectionName);
+        CopyMemberService jobDescription = new CopyMemberService(getShell(), qualifiedConnectionName);
 
         for (int idx = 0; idx < selectedItemsMembers.length; idx++) {
             SearchResult _searchResult = (SearchResult)selectedItemsMembers[idx];
@@ -901,16 +917,47 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
 
             for (int idx = 0; idx < selectedItemsMembers.length; idx++) {
                 SearchResult _searchResult = (SearchResult)selectedItemsMembers[idx];
-                Member member = IBMiHostContributionsHandler.getMember(connectionName, _searchResult.getLibrary(), _searchResult.getFile(),
+                Member member = IBMiHostContributionsHandler.getMember(qualifiedConnectionName, _searchResult.getLibrary(), _searchResult.getFile(),
                     _searchResult.getMember());
                 members.add(member);
             }
 
-            IBMiHostContributionsHandler.compareSourceMembers(connectionName, members, isEditMode);
+            IBMiHostContributionsHandler.compareSourceMembers(qualifiedConnectionName, members, isEditMode);
 
         } catch (Exception e) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
         }
+    }
+
+    private void executeMenuItemSourceFileSearch() {
+
+        Map<String, SearchElement> _searchElements = new LinkedHashMap<String, SearchElement>();
+
+        for (int i = 0; i < selectedItemsMembers.length; i++) {
+            SearchResult searchResult = (SearchResult)selectedItemsMembers[i];
+            SearchElement _searchElement = new SearchElement(searchResult);
+            _searchElements.put(_searchElement.getKey(), _searchElement);
+        }
+
+        SearchDialog dialog = new SearchDialog(getShell(), _searchElements, true);
+        if (dialog.open() == Dialog.OK) {
+
+            SearchOptions searchOptions = dialog.getSearchOptions();
+            ArrayList<SearchElement> selectedElements = dialog.getSelectedElements();
+
+            SearchPostRun postRun = new SearchPostRun();
+            postRun.setConnection(null);
+            postRun.setConnectionName(qualifiedConnectionName);
+            postRun.setSearchString(searchOptions.getCombinedSearchString());
+            postRun.setSearchElements(_searchElements);
+            postRun.setWorkbenchWindow(UIHelper.getActivePage().getWorkbenchWindow());
+
+            Connection jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(qualifiedConnectionName);
+            SearchExec searchExec = new SearchExec();
+            searchExec.execute(qualifiedConnectionName, jdbcConnection, searchOptions, selectedElements, postRun);
+
+        }
+
     }
 
     private void executeMenuItemCreateFilterFromSelectedMembers() {
@@ -980,7 +1027,7 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
     }
 
     public String getConnectionName() {
-        return connectionName;
+        return qualifiedConnectionName;
     }
 
     public String getSearchString() {
