@@ -131,6 +131,8 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
         deletedDialogs = new HashSet<DEditor>();
         newWidgetButtons = new HashSet<Button>();
         assignToolItems = new HashSet<ToolItem>();
+
+        repository.resetLastAsked();
     }
 
     public void addDataSpaceEditor(DEditor dEditor) {
@@ -410,7 +412,7 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
         treeViewer.setLabelProvider(new TreeViewLabelProvider());
         treeViewer.setSorter(new TreeViewSorter());
 
-        treeViewerInput = DataSpaceEditorRepository.getInstance().getCopyOfDataSpaceEditors();
+        treeViewerInput = repository.getCopyOfDataSpaceEditors();
         treeViewer.setInput(treeViewerInput);
         // treeViewer.addDropSupport(DND.DROP_NONE, new Transfer[] {}, new
         // DropVetoListerner());
@@ -600,7 +602,8 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
 
         RemoteObject remoteObject = remoteObjects[0];
         if (!(ISeries.DTAARA.equals(remoteObject.getObjectType()) || ISeries.USRSPC.equals(remoteObject.getObjectType()))) {
-            MessageDialogAsync.displayNonBlockingError(getShell(), Messages.Only_character_data_areas_or_user_spaces_are_allowed_to_provide_sample_data);
+            MessageDialogAsync.displayNonBlockingError(getShell(),
+                Messages.Only_character_data_areas_or_user_spaces_are_allowed_to_provide_sample_data);
             return;
         }
 
@@ -610,7 +613,8 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
 
             if (ISeries.DTAARA.equals(remoteObject.getObjectType())) {
                 if (!AbstractWrappedDataSpace.CHARACTER.equals(dataArea.getDataType())) {
-                    MessageDialogAsync.displayNonBlockingError(getShell(), Messages.Only_character_data_areas_or_user_spaces_are_allowed_to_provide_sample_data);
+                    MessageDialogAsync.displayNonBlockingError(getShell(),
+                        Messages.Only_character_data_areas_or_user_spaces_are_allowed_to_provide_sample_data);
                     return;
                 }
             }

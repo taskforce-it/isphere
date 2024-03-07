@@ -15,6 +15,8 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -69,6 +71,8 @@ public final class DataSpaceEditorRepository {
     private Map<String, DEditor> dEditors;
     private DataSpaceEditorManager manager;
 
+    private Date lastAskedTime;
+
     /**
      * Private constructor to ensure the Singleton pattern.
      */
@@ -79,6 +83,10 @@ public final class DataSpaceEditorRepository {
 
         dEditors = new HashMap<String, DEditor>();
         manager = new DataSpaceEditorManager();
+    }
+
+    public void resetLastAsked() {
+        lastAskedTime = null;
     }
 
     /**
@@ -237,12 +245,16 @@ public final class DataSpaceEditorRepository {
         if (dEditors.size() == 0) {
             dEditors = loadEditors(getRepositoryLocation());
             if (dEditors.size() == 0) {
+                if (lastAskedTime == null) {
 
-                Boolean createExampleDataSpaceEditorsConfirmed = DoNotAskMeAgainDialog.openConfirm(UIHelper.getActiveShell(),
-                    DoNotAskMeAgain.CONFIRM_CREATE_EXAMPLE_DATA_SPACE_EDITORS, Messages.Create_example_data_space_editors);
+                    lastAskedTime = Calendar.getInstance().getTime();
 
-                if (createExampleDataSpaceEditorsConfirmed) {
-                    loadExampleEditors();
+                    Boolean createExampleDataSpaceEditorsConfirmed = DoNotAskMeAgainDialog.openConfirm(UIHelper.getActiveShell(),
+                        DoNotAskMeAgain.CONFIRM_CREATE_EXAMPLE_DATA_SPACE_EDITORS, Messages.Create_example_data_space_editors);
+
+                    if (createExampleDataSpaceEditorsConfirmed) {
+                        loadExampleEditors();
+                    }
                 }
             }
         }
