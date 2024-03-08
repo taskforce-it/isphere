@@ -13,10 +13,12 @@ Changelog: iSphere 6.0.0.b001
    library.
  • Remove iSphere Compare Filters plug-in. Class
    IgnoreDateCompareFilter has been moved to the iSphere Core
-    plug-in.
+   plug-in.
  • Added option to load example data space editors.
  • Updated example data area and user space editors.
    (TSTDTAARA1 and TSTUSRSPC1)
+ • Fixed unexpected member lock when comparing members in browse
+   mode. (iSphere ticket #146)
  • Fixed producing key of DEditor widgets.
  • Fixed updating properties of DEditor widgets.
  • Changed data area editor to show an error dialog on save errors.
