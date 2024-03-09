@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2022 iSphere Project Owners
+ * Copyright (c) 2012-2024 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -145,7 +145,7 @@ public abstract class AbstractMessageFileSearchDelegate {
         String file = getResourceName(messageFile);
         String description = getResourceDescription(messageFile);
 
-        String tKey = library + "-" + file; //$NON-NLS-1$
+        String tKey = SearchElement.produceKey(library, file);
         if (!searchElements.containsKey(tKey)) {
             SearchElement aSearchElement = new SearchElement();
             aSearchElement.setLibrary(library);

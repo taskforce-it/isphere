@@ -9,6 +9,8 @@ Changelog: iSphere 6.0.0.b001
    File Search result view.
  • Added option 'iSphere Stream File Search' to the iSphere Stream
    File Search result view.
+ • Added option 'iSphere Message File Search' to the iSphere Message
+   File Search result view.
  • Changed upload dialog to allow multiple uploads of the iSphere
    library.
  • Remove iSphere Compare Filters plug-in. Class

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Owners
+ * Copyright (c) 2012-2024 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,8 +8,11 @@
 
 package biz.isphere.core.messagefilesearch;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -48,9 +51,11 @@ import biz.isphere.base.internal.ClipboardHelper;
 import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.IResizableTableColumnsViewer;
+import biz.isphere.base.internal.UIHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.externalapi.Access;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.DialogActionTypes;
 import biz.isphere.core.internal.FilterDialog;
 import biz.isphere.core.internal.IEditor;
@@ -276,6 +281,8 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
         private MenuItem menuItemInvertSelection;
         private MenuItem menuCopySelected;
         private MenuItem menuItemRemove;
+        private MenuItem menuItemSeparator1;
+        private MenuItem menuMessageFileSearch;
         private MenuItem menuItemSeparator2;
         private MenuItem menuCreateFilterFromSelectedMembers;
         private MenuItem menuExportSelectedMembersToExcel;
@@ -298,6 +305,8 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
             dispose(menuItemInvertSelection);
             dispose(menuCopySelected);
             dispose(menuItemRemove);
+            dispose(menuItemSeparator1);
+            dispose(menuMessageFileSearch);
             dispose(menuItemSeparator2);
             dispose(menuCreateFilterFromSelectedMembers);
             dispose(menuExportSelectedMembersToExcel);
@@ -376,6 +385,18 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
                     }
                 });
 
+                menuItemSeparator1 = new MenuItem(menuTableMessageFiles, SWT.SEPARATOR);
+
+                menuMessageFileSearch = new MenuItem(menuTableMessageFiles, SWT.NONE);
+                menuMessageFileSearch.setText(Messages.iSphere_Message_File_Search);
+                menuMessageFileSearch.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_SOURCE_FILE_SEARCH));
+                menuMessageFileSearch.addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(SelectionEvent e) {
+                        executeMenuItemMessageFileSearch();
+                    }
+                });
+
                 menuItemSeparator2 = new MenuItem(menuTableMessageFiles, SWT.SEPARATOR);
 
                 menuCreateFilterFromSelectedMembers = new MenuItem(menuTableMessageFiles, SWT.NONE);
@@ -384,7 +405,7 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
                 menuCreateFilterFromSelectedMembers.addSelectionListener(new SelectionAdapter() {
                     @Override
                     public void widgetSelected(SelectionEvent e) {
-                        executeMenuItemCreateFilterFromSelectedMembers();
+                        executeMenuItemCreateFilterFromSelectedMessageFiles();
                     }
                 });
 
@@ -420,23 +441,17 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
                     if (_messageDescription != null) {
                         try {
                             if (isEditEnabled()) {
-                                Access.openMessageDescriptionEditor(shell, _searchResult.getConnectionName(), _searchResult.getLibrary(),
+                                Access.openMessageDescriptionEditor(getShell(), _searchResult.getConnectionName(), _searchResult.getLibrary(),
                                     _searchResult.getMessageFile(), _searchResultMessageId.getMessageId(), DialogActionTypes.CHANGE);
-                                // MessageDescriptionDetailDialog
-                                // _messageDescriptionDetailDialog = new
-                                // MessageDescriptionDetailDialog(shell,
-                                // DialogActionTypes.CHANGE,
-                                // _messageDescription);
-                                // _messageDescriptionDetailDialog.open();
                             } else {
-                                Access.openMessageDescriptionEditor(shell, _searchResult.getConnectionName(), _searchResult.getLibrary(),
+                                Access.openMessageDescriptionEditor(getShell(), _searchResult.getConnectionName(), _searchResult.getLibrary(),
                                     _searchResult.getMessageFile(), _searchResultMessageId.getMessageId(), DialogActionTypes.DISPLAY);
                             }
                         } catch (Throwable e) {
-                            MessageDialog.openError(shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+                            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
                         }
                     } else {
-                        MessageDialog.openError(shell, Messages.E_R_R_O_R,
+                        MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
                             Messages.bind(Messages.Message_identifier_A_not_found_in_message_file_B_in_C,
                                 new String[] { _searchResultMessageId.getMessageId(), _searchResult.getMessageFile(), _searchResult.getLibrary() }));
                     }
@@ -553,9 +568,9 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
 
         try {
             if (isEditMode) {
-                Access.openMessageFileEditor(shell, connectionName, library, messageFile, false);
+                Access.openMessageFileEditor(getShell(), connectionName, library, messageFile, false);
             } else {
-                Access.openMessageFileEditor(shell, connectionName, library, messageFile, true);
+                Access.openMessageFileEditor(getShell(), connectionName, library, messageFile, true);
             }
         } catch (Exception e) {
             ISpherePlugin.logError("*** Could not open message file editor ***", e); //$NON-NLS-1$
@@ -661,7 +676,38 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
         }
     }
 
-    private void executeMenuItemCreateFilterFromSelectedMembers() {
+    private void executeMenuItemMessageFileSearch() {
+
+        HashMap<String, SearchElement> _searchElements = new LinkedHashMap<String, SearchElement>();
+
+        for (int i = 0; i < selectedItemsMessageFiles.length; i++) {
+            SearchResult searchResult = (SearchResult)selectedItemsMessageFiles[i];
+            SearchElement _searchElement = new SearchElement(searchResult);
+            _searchElements.put(_searchElement.getKey(), _searchElement);
+        }
+
+        SearchDialog dialog = new SearchDialog(getShell(), _searchElements, true);
+        if (dialog.open() == Dialog.OK) {
+
+            SearchOptions searchOptions = dialog.getSearchOptions();
+            ArrayList<SearchElement> selectedElements = dialog.getSelectedElements();
+
+            SearchPostRun postRun = new SearchPostRun();
+            postRun.setConnection(null);
+            postRun.setConnectionName(connectionName);
+            postRun.setSearchString(searchOptions.getCombinedSearchString());
+            postRun.setSearchElements(_searchElements);
+            postRun.setWorkbenchWindow(UIHelper.getActivePage().getWorkbenchWindow());
+
+            Connection jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(connectionName);
+            SearchExec searchExec = new SearchExec();
+            searchExec.execute(connectionName, jdbcConnection, searchOptions, selectedElements, postRun);
+
+        }
+
+    }
+
+    private void executeMenuItemCreateFilterFromSelectedMessageFiles() {
 
         IMessageFileSearchObjectFilterCreator creator = ISpherePlugin.getMessageFileSearchObjectFilterCreator();
 
@@ -672,7 +718,7 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
                 _selectedMessageFiles[i] = (SearchResult)selectedItemsMessageFiles[i];
             }
 
-            FilterDialog dialog = new FilterDialog(shell, RSEFilter.TYPE_MEMBER);
+            FilterDialog dialog = new FilterDialog(getShell(), RSEFilter.TYPE_MEMBER);
             dialog.setFilterPools(creator.getFilterPools(getConnectionName()));
             if (dialog.open() == Dialog.OK) {
                 if (!creator.createObjectFilter(getConnectionName(), dialog.getFilterPool(), dialog.getFilter(), dialog.getFilterUpdateType(),
@@ -689,7 +735,7 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
             _selectedMessageFiles[i] = (SearchResult)selectedItemsMessageFiles[i];
         }
 
-        MessageFilesToExcelExporter exporter = new MessageFilesToExcelExporter(shell, getSearchOptions(), _selectedMessageFiles);
+        MessageFilesToExcelExporter exporter = new MessageFilesToExcelExporter(getShell(), getSearchOptions(), _selectedMessageFiles);
         if (_selectedMessageFiles.length != getSearchResults().length) {
             exporter.setPartialExport(true);
         }
@@ -782,6 +828,10 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
     public void resetColumnWidths() {
         getDialogSettingsManager().resetColumnWidths(tableMessageFiles);
         getDialogSettingsManager().resetColumnWidths(tableMessageIds);
+    }
+
+    private Shell getShell() {
+        return shell;
     }
 
     private DialogSettingsManager getDialogSettingsManager() {
