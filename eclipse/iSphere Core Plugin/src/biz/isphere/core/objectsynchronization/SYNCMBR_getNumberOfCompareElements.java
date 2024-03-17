@@ -43,7 +43,7 @@ public class SYNCMBR_getNumberOfCompareElements {
 
             } else {
 
-                numberOfSearchElements = pcml.getIntValue("SYNCMBR_getNumberOfCompareElements.numberOfSearchElements"); //$NON-NLS-1$
+                numberOfSearchElements = pcml.getIntValue("SYNCMBR_getNumberOfCompareElements.numberOfCompareElements"); //$NON-NLS-1$
 
             }
 
