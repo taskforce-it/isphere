@@ -17,10 +17,14 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.SubMonitor;
 
+import com.ibm.as400.access.AS400;
+
 import biz.isphere.base.internal.SqlHelper;
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.objectsynchronization.MemberDescription;
+import biz.isphere.core.objectsynchronization.SYNCMBR_getNumberOfCompareElements;
 
 /**
  * This class loads the members that are compared from file SYNCMBRW.
@@ -81,6 +85,7 @@ public class LoadCompareMembersJob extends AbstractCompareMembersJob {
         try {
 
             if (subMonitor.isCanceled()) {
+                cancelJob(handle);
                 return EMPTY_RESULT;
             }
 
@@ -88,14 +93,14 @@ public class LoadCompareMembersJob extends AbstractCompareMembersJob {
                 return EMPTY_RESULT;
             }
 
-            return doLoadMemberDescriptions(connectionName, handle, mode);
+            return doLoadMemberDescriptions(subMonitor, connectionName, handle, mode);
 
         } finally {
             restoreCurrentLibrary();
         }
     }
 
-    private MemberDescription[] doLoadMemberDescriptions(String connectionName, int handle, SyncMbrMode mode) {
+    private MemberDescription[] doLoadMemberDescriptions(SubMonitor subMonitor, String connectionName, int handle, SyncMbrMode mode) {
 
         ArrayList<MemberDescription> arrayListSearchResults = new ArrayList<MemberDescription>();
 
@@ -104,6 +109,11 @@ public class LoadCompareMembersJob extends AbstractCompareMembersJob {
 
         PreparedStatement preparedStatementSelect = null;
         ResultSet resultSet = null;
+
+        int numMembers = getNumMembers(connectionName, handle, mode);
+
+        SubMonitor localSubMonitor = split(subMonitor, 1);
+        localSubMonitor.setWorkRemaining(numMembers);
 
         try {
 
@@ -148,6 +158,13 @@ public class LoadCompareMembersJob extends AbstractCompareMembersJob {
 
             while (resultSet.next()) {
 
+                if (localSubMonitor.isCanceled()) {
+                    cancelJob(handle);
+                    return EMPTY_RESULT;
+                }
+
+                consume(localSubMonitor, Messages.Task_Loading_compare_data);
+
                 library = resultSet.getString(LIBRARY).trim();
                 file = resultSet.getString(FILE).trim();
                 member = resultSet.getString(MEMBER).trim();
@@ -171,7 +188,9 @@ public class LoadCompareMembersJob extends AbstractCompareMembersJob {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            ISpherePlugin.logError("*** Could not download members (" + mode.mode() + ") ***", e); //$NON-NLS-1$ //$NON-NLS-2$
+        } finally {
+            localSubMonitor.done();
         }
 
         if (resultSet != null) {
@@ -186,11 +205,42 @@ public class LoadCompareMembersJob extends AbstractCompareMembersJob {
             try {
                 preparedStatementSelect.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                ISpherePlugin.logError("*** Could close prepared statement (" + mode.mode() + ") ***", e); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
 
         return arrayListSearchResults.toArray(new MemberDescription[arrayListSearchResults.size()]);
+    }
+
+    private int getNumMembers(String connectionName, int handle, SyncMbrMode mode) {
+
+        AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
+        int numMembers = new SYNCMBR_getNumberOfCompareElements().run(system, handle, mode.mode());
+
+        return numMembers;
+    }
+
+    private void cancelJob(int handle) {
+
+        SqlHelper sqlHelper = getSqlHelper();
+
+        PreparedStatement preparedStatementUpdate = null;
+        try {
+            preparedStatementUpdate = getJdbcConnection().prepareStatement(
+                "UPDATE " + sqlHelper.getObjectName(getISphereLibrary(), "SYNCMBRS") + " SET XSCNL = '*YES' WHERE XSHDL = ?");
+            preparedStatementUpdate.setInt(1, handle);
+            preparedStatementUpdate.executeUpdate();
+        } catch (SQLException e) {
+            ISpherePlugin.logError("*** Could not cancel host job of load synchronize members job ***", e);
+        }
+        if (preparedStatementUpdate != null) {
+            try {
+                preparedStatementUpdate.close();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+        }
+
     }
 
 }
