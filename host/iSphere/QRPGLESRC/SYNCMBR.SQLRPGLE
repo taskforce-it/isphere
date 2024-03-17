@@ -135,6 +135,8 @@ dcl-pr strerror pointer extproc('strerror');
   i_errno        int(10) value;
 end-pr;
 
+dcl-s g_countResolvedMembers int(10);
+
 // ==========================================================================================
 //  Get Handle
 // ==========================================================================================
@@ -186,11 +188,11 @@ dcl-proc SYNCMBR_resolveGenericCompareElements export;
 
   // ----------------------------------------------------------------------------------------
 
+  g_countResolvedMembers = 0;
+
   resolveGenericFiles(i_handle: i_mode);
 
   resolveGenericMembers(i_handle: i_mode: i_memberFilter);
-
-  updateStatus(i_handle: -1);
 
 end-proc;
 
@@ -598,6 +600,8 @@ dcl-proc resolveGenericMembers;
   dcl-s fullMemberName varchar(21);
   dcl-s memberNameMask varchar(21);
 
+  dcl-s lastCountResolvedMembers like(g_countResolvedMembers);
+
   // ----------------------------------------------------------------------------------------
 
   if (startsWith('<': i_memberFilter));
@@ -678,6 +682,11 @@ dcl-proc resolveGenericMembers;
       leave;
     endif;
 
+    // Check if process has to be canceled
+    if (isCanceled(i_handle));
+      leave;
+    endif;
+
     // Delete generic input element
     Exec SQL
        DELETE FROM
@@ -737,28 +746,14 @@ dcl-proc resolveGenericMembers;
 
           for counter = 1 To GHDRNbrEtry;
 
-
-           if (%rem(counter: 100) = 0);
+           g_countResolvedMembers += 1;
+           if (%rem(g_countResolvedMembers: 100) = 0);
 
              // Update file 'Status'
-             updateStatus(i_handle: counter);
+             updateStatus(i_handle: g_countResolvedMembers);
+             lastCountResolvedMembers = g_countResolvedMembers;
 
-             // Initialize 'Cancel'
-             cancel = '';
-
-             // Check if compare has to be canceled
-             Exec SQL
-                SELECT
-                   XSCNL
-                INTO
-                   :cancel
-                FROM
-                   SYNCMBRS
-                WHERE
-                   XSHDL = :i_handle;
-
-             // Compare has to be canceled
-             if (cancel = '*YES');
+             if (isCanceled(i_handle));
                leave;
              endif;
 
@@ -913,6 +908,11 @@ dcl-proc resolveGenericMembers;
     endif;
 
   enddo;
+
+  if (lastCountResolvedMembers <> g_countResolvedMembers);
+    updateStatus(i_handle: g_countResolvedMembers);
+    lastCountResolvedMembers = g_countResolvedMembers;
+  endif;
 
 on-exit;
 
