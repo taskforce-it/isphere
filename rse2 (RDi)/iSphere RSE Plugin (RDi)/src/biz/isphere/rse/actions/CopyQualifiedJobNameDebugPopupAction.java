@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Team
+ * Copyright (c) 2012-2024 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@ package biz.isphere.rse.actions;
 
 import java.util.Iterator;
 
-import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
@@ -46,7 +45,7 @@ public class CopyQualifiedJobNameDebugPopupAction implements IViewActionDelegate
                 DebuggeeProcess debuggeeProcess = getDebuggeeProcess(selectionIterator.next());
                 if (debuggeeProcess != null) {
 
-                    String qualifiedJobNameAttr = getJobName(debuggeeProcess);
+                    String qualifiedJobNameAttr = getProzessID(debuggeeProcess);
                     QualifiedJobName qualifiedJobName = QualifiedJobName.parse(qualifiedJobNameAttr);
                     if (qualifiedJobName == null) {
                         MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Invalid_job_name_A, qualifiedJobNameAttr));
@@ -64,10 +63,6 @@ public class CopyQualifiedJobNameDebugPopupAction implements IViewActionDelegate
         if (buffer.length() > 0) {
             ClipboardHelper.setText(buffer.toString());
         }
-    }
-
-    private String getJobName(IProcess debuggeeProcess) {
-        return debuggeeProcess.getAttribute(null);
     }
 
     public void selectionChanged(IAction action, ISelection selection) {
@@ -103,11 +98,15 @@ public class CopyQualifiedJobNameDebugPopupAction implements IViewActionDelegate
         return null;
     }
 
+    private String getProzessID(DebuggeeProcess debuggeeProcess) {
+        return debuggeeProcess.getProcessID();
+    }
+
     private boolean isIBMiJob(Object object) {
 
-        if ((object instanceof IProcess)) {
-            IProcess process = (IProcess)object;
-            if (QualifiedJobName.parse(process.getAttribute(null)) != null) {
+        if ((object instanceof DebuggeeProcess)) {
+            DebuggeeProcess debuggeeProcess = (DebuggeeProcess)object;
+            if (QualifiedJobName.parse(getProzessID(debuggeeProcess)) != null) {
                 return true;
             }
         }

@@ -19,6 +19,10 @@ Changelog: iSphere 6.0.0.b001
  • Added option to load example data space editors.
  • Updated example data area and user space editors.
    (TSTDTAARA1 and TSTUSRSPC1)
+ • Fixed the following debugger actions:
+     - Work with spooled files
+     - Copy qualified job name
+     - Open job log
  • Fixed unexpected member lock when comparing members in browse
    mode. (iSphere ticket #146)
  • Fixed producing key of DEditor widgets.
