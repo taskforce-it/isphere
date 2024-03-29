@@ -190,7 +190,7 @@ public class LoadCompareMembersJob extends AbstractCompareMembersJob {
         } catch (SQLException e) {
             ISpherePlugin.logError("*** Could not download members (" + mode.mode() + ") ***", e); //$NON-NLS-1$ //$NON-NLS-2$
         } finally {
-            localSubMonitor.done();
+            done(localSubMonitor);
         }
 
         if (resultSet != null) {
@@ -226,8 +226,8 @@ public class LoadCompareMembersJob extends AbstractCompareMembersJob {
 
         PreparedStatement preparedStatementUpdate = null;
         try {
-            preparedStatementUpdate = getJdbcConnection().prepareStatement(
-                "UPDATE " + sqlHelper.getObjectName(getISphereLibrary(), "SYNCMBRS") + " SET XSCNL = '*YES' WHERE XSHDL = ?");
+            preparedStatementUpdate = getJdbcConnection()
+                .prepareStatement("UPDATE " + sqlHelper.getObjectName(getISphereLibrary(), "SYNCMBRS") + " SET XSCNL = '*YES' WHERE XSHDL = ?");
             preparedStatementUpdate.setInt(1, handle);
             preparedStatementUpdate.executeUpdate();
         } catch (SQLException e) {

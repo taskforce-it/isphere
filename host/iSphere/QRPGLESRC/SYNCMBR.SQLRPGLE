@@ -115,7 +115,7 @@ end-pr;
 
 dcl-pr updateStatus extproc('updateStatus');
   i_handle         int(10) const;
-  i_status         int(10) const;
+  i_count          int(10) const;
 end-pr;
 
 // Other External Prototypes
@@ -1108,7 +1108,7 @@ end-proc;
 dcl-proc updateStatus;
   dcl-pi *n;
     i_handle         int(10) const;
-    i_status         int(10) const;
+    i_count          int(10) const;
   end-pi;
 
   // ----------------------------------------------------------------------------------------
@@ -1118,7 +1118,7 @@ dcl-proc updateStatus;
     UPDATE
       SYNCMBRS
     SET
-      XSCNT = :i_status
+      XSCNT = :i_count
     WHERE
       XSHDL = :i_handle;
 
