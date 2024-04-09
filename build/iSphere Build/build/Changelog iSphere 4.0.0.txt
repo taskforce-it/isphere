@@ -19,6 +19,11 @@ Changelog: iSphere 6.0.0.b001
  • Added option to load example data space editors.
  • Updated example data area and user space editors.
    (TSTDTAARA1 and TSTUSRSPC1)
+ • Fixed "SWT Resource was not properly disposed" errors in:
+    - AbstractMessageFileCompareEditor
+    - AbstractTableLabelProvidere (message file compare editor)
+    - AbstractSynchronizeMembersEditor
+    - AbstractTableLabelProvidere (synchronize members editor)
  • Fixed the following debugger actions:
      - Work with spooled files
      - Copy qualified job name

@@ -11,10 +11,12 @@ package biz.isphere.core.objectsynchronization.rse;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -34,6 +36,7 @@ import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -183,6 +186,8 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
 
     private EditorCloseListener editorCloseListener;
 
+    private Set<Image> disposableImages;
+
     public AbstractSynchronizeMembersEditor() {
 
         isLeftObjectValid = false;
@@ -190,6 +195,8 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
 
         dialogSettingsManager = new DialogSettingsManager(ISpherePlugin.getDefault().getDialogSettings(), getClass());
         shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+
+        disposableImages = new HashSet<Image>();
     }
 
     @Override
@@ -255,7 +262,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
 
         btnSelectLeftObject = WidgetFactory.createPushButton(leftHeaderArea);
         btnSelectLeftObject.setToolTipText(Messages.Tooltip_Select_object);
-        btnSelectLeftObject.setImage(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_OPEN).createImage());
+        btnSelectLeftObject.setImage(getImage(ISpherePlugin.IMAGE_OPEN));
         btnSelectLeftObject.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent arg0) {
                 String connectionName = null;
@@ -307,7 +314,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
 
         btnSelectRightObject = WidgetFactory.createPushButton(rightHeaderArea);
         btnSelectRightObject.setToolTipText(Messages.Tooltip_Select_object);
-        btnSelectRightObject.setImage(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_OPEN).createImage());
+        btnSelectRightObject.setImage(getImage(ISpherePlugin.IMAGE_OPEN));
         btnSelectRightObject.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent arg0) {
                 String connectionName = null;
@@ -385,7 +392,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
         filterData = new TableFilterData();
 
         btnCopyRight = WidgetFactory.createToggleButton(filterOptionsGroup, SWT.FLAT);
-        btnCopyRight.setImage(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COPY_RIGHT).createImage());
+        btnCopyRight.setImage(getImage(ISpherePlugin.IMAGE_COPY_RIGHT));
         btnCopyRight.setToolTipText(Messages.Tooltip_display_copy_from_left_to_right);
         btnCopyRight.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent event) {
@@ -397,7 +404,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
         });
 
         btnEqual = WidgetFactory.createToggleButton(filterOptionsGroup, SWT.FLAT);
-        btnEqual.setImage(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COPY_EQUAL).createImage());
+        btnEqual.setImage(getImage(ISpherePlugin.IMAGE_COPY_EQUAL));
         btnEqual.setToolTipText(Messages.Tooltip_display_equal_items);
         btnEqual.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent event) {
@@ -409,7 +416,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
         });
 
         btnNoCopy = WidgetFactory.createToggleButton(filterOptionsGroup, SWT.FLAT);
-        btnNoCopy.setImage(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COPY_NOT_EQUAL).createImage());
+        btnNoCopy.setImage(getImage(ISpherePlugin.IMAGE_COPY_NOT_EQUAL));
         btnNoCopy.setToolTipText(Messages.Tooltip_display_unequal_items);
         btnNoCopy.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent event) {
@@ -421,7 +428,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
         });
 
         btnCopyLeft = WidgetFactory.createToggleButton(filterOptionsGroup, SWT.FLAT);
-        btnCopyLeft.setImage(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COPY_LEFT).createImage());
+        btnCopyLeft.setImage(getImage(ISpherePlugin.IMAGE_COPY_LEFT));
         btnCopyLeft.setToolTipText(Messages.Tooltip_display_copy_from_right_to_left);
         btnCopyLeft.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent event) {
@@ -1481,27 +1488,26 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
             jobToCancel.cancelOperation();
         }
 
-        dispose(btnSelectLeftObject);
-        dispose(btnSelectRightObject);
-        dispose(btnCopyRight);
-        dispose(btnCopyLeft);
-        dispose(btnNoCopy);
-        dispose(btnEqual);
+        disposeImages();
 
         super.dispose();
     }
 
-    private void dispose(Button button) {
+    private void disposeImages() {
 
-        if (button.isDisposed()) {
-            return;
+        for (Image image : disposableImages) {
+            if (!image.isDisposed()) {
+                image.dispose();
+            }
         }
+    }
 
-        if (button.getImage().isDisposed()) {
-            return;
-        }
+    private Image getImage(String name) {
 
-        button.getImage().dispose();
+        Image image = ISpherePlugin.getDefault().getImage(name);
+        disposableImages.add(image);
+
+        return image;
     }
 
     protected abstract RemoteObject performSelectRemoteObject(String connectionName, String libraryName, String objectName, String objectType);
@@ -2082,6 +2088,6 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
     }
 
     private void debug(String message) {
-        System.out.println(message);
+        // System.out.println(message);
     }
 }

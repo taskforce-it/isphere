@@ -53,11 +53,11 @@ public abstract class AbstractTableLabelProvider extends LabelProvider implement
 
         this.compareOptions = null;
 
-        this.copyToLeft = ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COPY_LEFT).createImage();
-        this.copyToRight = ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COPY_RIGHT).createImage();
-        this.copyEqual = ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COPY_EQUAL).createImage();
-        this.copyNotEqual = ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COPY_NOT_EQUAL).createImage();
-        this.error = ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_ERROR).createImage();
+        this.copyToLeft = ISpherePlugin.getDefault().getImage(ISpherePlugin.IMAGE_COPY_LEFT);
+        this.copyToRight = ISpherePlugin.getDefault().getImage(ISpherePlugin.IMAGE_COPY_RIGHT);
+        this.copyEqual = ISpherePlugin.getDefault().getImage(ISpherePlugin.IMAGE_COPY_EQUAL);
+        this.copyNotEqual = ISpherePlugin.getDefault().getImage(ISpherePlugin.IMAGE_COPY_NOT_EQUAL);
+        this.error = ISpherePlugin.getDefault().getImage(ISpherePlugin.IMAGE_ERROR);
 
         if (useCompareStatusImagePainter()) {
             tableViewer.getTable().addListener(SWT.PaintItem, new CompareStatusImagePainter(columnIndex));
