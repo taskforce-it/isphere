@@ -37,6 +37,7 @@
              EXPORT     SYMBOL('STRING_matches')
              EXPORT     SYMBOL('STRING_lcase')
              EXPORT     SYMBOL('STRING_ucase')
+             EXPORT     SYMBOL('STRING_contains')
 
      /* End Export */
              ENDPGMEXP

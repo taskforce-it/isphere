@@ -21,6 +21,11 @@ dcl-pr endsWith ind extproc('STRING_endsWith');
   i_string       like(string_t) const;
 end-pr;
 
+dcl-pr contains ind extproc('STRING_contains');
+  i_subString    like(string_t) const;
+  i_string       like(string_t) const;
+end-pr;
+
 dcl-pr matches ind extproc('STRING_matches');
   i_pattern      like(string_t) const;
   i_string       like(string_t) const;

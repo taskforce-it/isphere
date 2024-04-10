@@ -422,7 +422,7 @@ dcl-proc resolveGenericFiles;
           // TODO: incorrect mode
         endsl;
 
-        if (startsWith('*': qFile.name));
+        if (contains('*': qFile.name));
           mask = ucase(%trimr(qFile.name));
           doGenericStringCompare = *on;
           qFile.name = '*ALL';
@@ -721,7 +721,7 @@ dcl-proc resolveGenericMembers;
           // TODO: incorrect mode
         endsl;
 
-        if (startsWith('*': member));
+        if (contains('*': member));
           mask = ucase(%trimr(member));
           doGenericStringCompare = *on;
           member = '*ALL';

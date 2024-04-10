@@ -56,16 +56,21 @@ dcl-proc startsWith export;
     return *on;
   endif;
 
-  if (%subst(i_string: 1: %len(i_prefix)) <> i_prefix);
-     return *off;
+  if (%subst(i_string: 1: %len(i_prefix)) = i_prefix);
+     return *on;
   endif;
 
-  return *on;
+  return *off;
 
 end-proc;
 
 // ==========================================================================================
 //  Returns the sub string that starts at a given position.
+//  Works the same as Java String.substring(start, end), but uses parameters
+//  'start' and 'length'.
+//  See:
+//    - Java unit test: biz.isphere.junit.TestString.testMid()
+//    - iRPGUnit test: STRINGRU.testMid()
 // ==========================================================================================
 
 dcl-proc mid export;
@@ -85,7 +90,7 @@ dcl-proc mid export;
   if (%parms() >= %parmnum(i_length));
     length = i_length;
   else;
-    length = *hival;
+    length = %len(i_string) - i_start + 1;
   endif;
 
   if (i_start > %len(i_string) + 1 or i_start < 1);
@@ -93,7 +98,8 @@ dcl-proc mid export;
   endif;
 
   if (i_start + length - 1 > %len(i_string));
-    length = %len(i_string) - i_start + 1;
+  //  length = %len(i_string) - i_start + 1;
+    kill('Length is out of range: ' + %char(i_length));
   endif;
 
   if (length < 0);
@@ -131,11 +137,40 @@ dcl-proc endsWith export;
     return *on;
   endif;
 
-  if (%subst(i_string: %len(i_string) - %len(i_suffix) + 1) <> i_suffix);
+  if (%subst(i_string: %len(i_string) - %len(i_suffix) + 1) = i_suffix);
+     return *on;
+  endif;
+
+  return *off;
+
+end-proc;
+
+// ==========================================================================================
+//  Tests if the specified string contains a given sub-string.
+// ==========================================================================================
+
+dcl-proc contains export;
+  dcl-pi *n ind;
+    i_subString    like(string_t) const;
+    i_string       like(string_t) const;
+  end-pi;
+
+  // ------------------------------------------------------------------------------------------
+
+  if (%len(i_string) = 0  or
+      %len(i_string) < %len(i_subString));
      return *off;
   endif;
 
-  return *on;
+  if (%len(i_subString) = 0);
+    return *on;
+  endif;
+
+  if (%scan(i_subString: i_string) > 0);
+     return *on;
+  endif;
+
+  return *off;
 
 end-proc;
 
