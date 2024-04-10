@@ -24,6 +24,10 @@ import java.util.Set;
 
 import org.junit.Test;
 
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400JDBCDriver;
+import com.ibm.xtq.xslt.runtime.RuntimeError;
+
 import biz.isphere.base.internal.SqlHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.search.MatchOption;
@@ -35,10 +39,6 @@ import biz.isphere.core.sourcefilesearch.FNDSTR_search;
 import biz.isphere.core.sourcefilesearch.SearchElement;
 import biz.isphere.core.sourcefilesearch.SearchResult;
 import biz.isphere.core.sourcefilesearch.SearchResultStatement;
-
-import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.AS400JDBCDriver;
-import com.ibm.xtq.xslt.runtime.RuntimeError;
 
 /**
  * This class is a JUnit test suite for testing the 'iSphere Source File Search'
@@ -360,8 +360,8 @@ public class SourceFileSearchTest {
             assertTrue("Unexpected member: " + searchResult.getMember(), "DEMO9".equals(searchResult.getMember()));
 
             for (int i = 0; i < searchResult.getStatements().length; i++) {
-                assertTrue("Unexpected stmt #" + searchResult.getStatements()[i], searchResult.getStatements()[i].getStatement() == 35
-                    || searchResult.getStatements()[i].getStatement() == 37);
+                assertTrue("Unexpected stmt #" + searchResult.getStatements()[i],
+                    searchResult.getStatements()[i].getStatement() == 36 || searchResult.getStatements()[i].getStatement() == 38);
             }
 
             assertTrue(searchResult.getMember().startsWith("DEMO"));
@@ -420,8 +420,8 @@ public class SourceFileSearchTest {
             assertEquals("DEMO4", searchResult.getMember());
 
             for (int i = 0; i < searchResult.getStatements().length; i++) {
-                assertTrue("Unexpected stmt #" + searchResult.getStatements()[i], searchResult.getStatements()[i].getStatement() == 37
-                    || searchResult.getStatements()[i].getStatement() == 84);
+                assertTrue("Unexpected stmt #" + searchResult.getStatements()[i],
+                    searchResult.getStatements()[i].getStatement() == 38 || searchResult.getStatements()[i].getStatement() == 83);
             }
 
             assertTrue(searchResult.getMember().startsWith("DEMO"));
