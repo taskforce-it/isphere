@@ -49,6 +49,9 @@
                 RMVMSG     PGMQ(*SAME (*)) CLEAR(*ALL)
              ENDDO
 
+             /* Program BUILD_VER of the iSphere BUILD command updates the     */
+             /* data area with the actual version defined in member COPYRIGHT, */
+             /* constant ISPHERE_SERVER_VERSION.                               */
              CRTDTAARA  DTAARA(&LIB/&OBJ) TYPE(*CHAR) LEN(256) TEXT('iSphere +
                           Version')
 
