@@ -813,38 +813,57 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
 
         if (tableViewer != null) {
 
-            if (tableFilter != null) {
-                tableViewer.removeFilter(tableFilter);
-                clearTableStatistics();
-            }
+            long startTime = System.currentTimeMillis();
 
-            if (filterData != null) {
+            Object input = null;
 
-                filterData.setCopyLeft(btnCopyLeft.getSelection());
-                filterData.setCopyRight(btnCopyRight.getSelection());
-                filterData.setEqual(btnEqual.getSelection());
-                filterData.setNoCopy(btnNoCopy.getSelection());
-                filterData.setSingles(btnSingles.getSelection());
-                filterData.setDuplicates(btnDuplicates.getSelection());
+            try {
 
-                if (isSynchronizationEnabled()) {
-                    filterData.setErrorsOnly(chkDisplayErrorsOnly.getSelection());
-                } else {
-                    filterData.setErrorsOnly(false);
+                tableViewer.getControl().setRedraw(false);
+                input = tableViewer.getInput();
+                tableViewer.setInput(null);
+
+                if (tableFilter != null) {
+                    tableViewer.removeFilter(tableFilter);
+                    clearTableStatistics();
                 }
 
-                if (tableFilter == null) {
-                    tableFilter = new TableFilter(getTableStatistics());
+                if (filterData != null) {
+
+                    filterData.setCopyLeft(btnCopyLeft.getSelection());
+                    filterData.setCopyRight(btnCopyRight.getSelection());
+                    filterData.setEqual(btnEqual.getSelection());
+                    filterData.setNoCopy(btnNoCopy.getSelection());
+                    filterData.setSingles(btnSingles.getSelection());
+                    filterData.setDuplicates(btnDuplicates.getSelection());
+
+                    if (isSynchronizationEnabled()) {
+                        filterData.setErrorsOnly(chkDisplayErrorsOnly.getSelection());
+                    } else {
+                        filterData.setErrorsOnly(false);
+                    }
+
+                    if (tableFilter == null) {
+                        tableFilter = new TableFilter(getTableStatistics());
+                    }
+
+                    clearTableStatistics();
+                    tableFilter.setFilterData(filterData);
+                    tableViewer.addFilter(tableFilter);
                 }
 
-                clearTableStatistics();
-                tableFilter.setFilterData(filterData);
-                tableViewer.addFilter(tableFilter);
+                setButtonEnablementAndDisplayCompareStatus();
+
+                storeScreenValues();
+
+            } finally {
+                if (input != null) {
+                    tableViewer.setInput(input);
+                }
+                tableViewer.getControl().setRedraw(true);
+
+                System.out.println("Time in msecs: " + (System.currentTimeMillis() - startTime));
             }
-
-            setButtonEnablementAndDisplayCompareStatus();
-
-            storeScreenValues();
         }
     }
 
