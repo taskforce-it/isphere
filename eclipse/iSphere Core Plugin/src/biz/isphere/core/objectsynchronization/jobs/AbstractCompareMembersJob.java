@@ -175,8 +175,10 @@ public abstract class AbstractCompareMembersJob {
             return;
         }
 
-        subMonitor.setTaskName(subTaskName);
         if (!subMonitor.isCanceled()) {
+            if (subTaskName != null) {
+                subMonitor.setTaskName(subTaskName);
+            }
             subMonitor.worked(1);
         }
     }

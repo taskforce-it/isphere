@@ -55,11 +55,13 @@ public class LoadCompareMembersJob extends AbstractCompareMembersJob {
 
             CompareMembersSharedJobValues sharedValues = getSharedValues();
 
-            consume(subMonitor, Messages.Task_Loading_compare_data);
+            int numLeftMembers = getNumMembers(sharedValues.getLeftConnectionName(), sharedValues.getLeftHandle(), SyncMbrMode.LEFT_SYSTEM);
+            int numRightMembers = getNumMembers(sharedValues.getRightConnectionName(), sharedValues.getRightHandle(), SyncMbrMode.RIGHT_SYSTEM);
+            subMonitor.setWorkRemaining(numLeftMembers + numRightMembers);
+
             leftMembers = loadMemberDescriptions(subMonitor, sharedValues.getLeftConnectionName(), sharedValues.getLeftHandle(),
                 SyncMbrMode.LEFT_SYSTEM);
 
-            consume(subMonitor, Messages.Task_Loading_compare_data);
             rightMembers = loadMemberDescriptions(subMonitor, sharedValues.getRightConnectionName(), sharedValues.getRightHandle(),
                 SyncMbrMode.RIGHT_SYSTEM);
 
@@ -110,11 +112,6 @@ public class LoadCompareMembersJob extends AbstractCompareMembersJob {
         PreparedStatement preparedStatementSelect = null;
         ResultSet resultSet = null;
 
-        int numMembers = getNumMembers(connectionName, handle, mode);
-
-        SubMonitor localSubMonitor = split(subMonitor, 1);
-        localSubMonitor.setWorkRemaining(numMembers);
-
         try {
 
             if (handle == ERROR_HANDLE) {
@@ -158,12 +155,12 @@ public class LoadCompareMembersJob extends AbstractCompareMembersJob {
 
             while (resultSet.next()) {
 
-                if (localSubMonitor.isCanceled()) {
+                if (subMonitor.isCanceled()) {
                     cancelHostJob(handle);
                     return EMPTY_RESULT;
                 }
 
-                consume(localSubMonitor, Messages.Task_Loading_compare_data);
+                consume(subMonitor, Messages.Task_Loading_compare_data);
 
                 library = resultSet.getString(LIBRARY).trim();
                 file = resultSet.getString(FILE).trim();
@@ -189,8 +186,6 @@ public class LoadCompareMembersJob extends AbstractCompareMembersJob {
 
         } catch (SQLException e) {
             ISpherePlugin.logError("*** Could not download members (" + mode.mode() + ") ***", e); //$NON-NLS-1$ //$NON-NLS-2$
-        } finally {
-            done(localSubMonitor);
         }
 
         if (resultSet != null) {
