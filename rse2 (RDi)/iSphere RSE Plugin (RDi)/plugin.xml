@@ -249,14 +249,14 @@
 				</or>
          	</enablement>
             
-	         <action
+            <action
                 class="biz.isphere.rse.actions.OpenSynchronizeMemberEditorAction"
                 enablesFor="2"
                 id="biz.isphere.rse.actions.OpenSynchronizeMemberEditorAction"
                 label="%iSphere_Synchronize_Members_Editor"
-			    icon="icons\synchronize_members.gif"
+                icon="icons\synchronize_members.gif"
                 menubarPath="additions">
-	         </action>
+            </action>
       	</objectContribution>
       	
       	<!--
