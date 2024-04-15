@@ -14,6 +14,7 @@
             style="float: right; margin-left: 60px; margin-right: 20px; margin-bottom: 40px"
             border=0>
     </a>
+    <h2>Introduction</h2>
     Talking about performance is always difficult. Of course you can measure the
     time a transaction takes and depending of the value the performance was good
     or bad. But what is "good" or "bad"? That is not clearly defined and often
@@ -32,6 +33,7 @@
     and then downloads it to the PC. On the PC the data is evaluated and the result
     is presented in a table.
     <p>
+    <h2>Real Data</h2>
     Here are some performance data that was gathered on an IBM i model "9105-42A". Feel
     free to use it to build your opinion about the performance of the "iSphere Synchronize
     Members Editor".
@@ -60,6 +62,12 @@
     <p>
     By the way, the text is "Resolving generic compare items...", because technically the
     SYNCMBR service program can use generic member names.
+    <p>
+    <h2>Changing UI Filter</h2>
+    Changing the table filter is also a relatively slow task. I was able to increase performance
+    up to a certain limit and I do not think that I can get it better. Before the optimization it
+    took up to 50 seconds to update the table filter. Now it takes between 0.5 and 5 seconds for
+    approximately 60000 lines, depending on the requested action.
     <p>
     <iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
 </body>
