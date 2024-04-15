@@ -55,6 +55,7 @@
     </topic>
   </topic>
   <topic label="Synchronize Members Editor" href="html/synchronizememberseditor/synchronizememberseditor.html">
+    <topic label="Performance" href="html/synchronizememberseditor/performance.html" />
   </topic>
   <topic label="Source File Compare/Merge Editor" href="html/sourcefilecomparemergeeditor/sourcefilecomparemergeeditor.html">
     <topic label="RDi 9.5 Extensions" href="html/sourcefilecomparemergeeditor/rdi95extensions/rdi95extensions.html" />
