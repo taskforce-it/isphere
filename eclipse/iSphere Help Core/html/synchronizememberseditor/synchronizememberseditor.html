@@ -62,20 +62,34 @@
        starting with &quot;BUILD_&quot;:
     <p>
         <img src="assets/synchronize_members_editor_selected.png" align="middle">
-    <p>In case you want to exclude members by name and/or type, you can negate
-       the selection mask by a preceding &quot;|&quot; (pipe symbol):
-    <p>
-        <img src="assets/filter_mask_negated.png" align="middle">
     <p>You can add multiple patterns separated by a space, comma or semicolon, for
     example: 
     <pre class="codeIndent">
     <b>*.rpgle, *.clle</b>.
     </pre>
-    <p>Patterns can be negated by preceding a pipe symbol (|). All patterns following
-       the pipe symbol are considered negated, for example:
+    <p>In case you want to exclude members by name and/or type, you can negate
+       the selection mask by a preceding &quot;|&quot; (pipe symbol):
+    <p>
+        <img src="assets/filter_mask_negated.png" align="middle">
+    <p>All patterns following the pipe symbol are considered negated, for example:
     <pre class="codeIndent">
     <b>*.rpgle, |demo*.*</b>.
     </pre>
+    <p>It is also possible to use regular expressions for filtering items by name
+    and type. Regular expressions must be start with a "<" character. The following
+    example selects all members starting with "DEMO" followed by up to 6 unspecified
+    characters. The member type must be "DSPF" or "PRTF":
+    <pre class="codeIndent">
+    <b>&lt;DEMO.{1,6}\.(PRT|DSP)F</b>
+    </pre>
+    <p>
+    <table>
+        <tr>
+            <td class="notice">Entering a search string or a regular expression in
+            upper or lower case does not matter, because the case is ignored.
+            </td>
+        </tr>
+    </table>
 
     <h3>Starting Comparison</h3>
     <p>Once there is a source file or library in both sides and after having set

@@ -1,7 +1,8 @@
 <pcml version="4.0">
-   <program name="SYNCMBR_resolveGenericCompareElements" path="/QSYS.LIB/%LIBL%.LIB/W005005.PGM">
+   <program name="SYNCMBR_resolveGenericMembers" path="/QSYS.LIB/%LIBL%.LIB/W005008.PGM">
       <data name="handle" type="zoned" length="10" precision="0" usage="input" />
       <data name="mode" type="char" length="10" usage="input" />
       <data name="memberFilter" type="char" length="1024" usage="input" />
+      <data name="isRegEx" type="char" length="1" usage="input" />
    </program>
 </pcml>

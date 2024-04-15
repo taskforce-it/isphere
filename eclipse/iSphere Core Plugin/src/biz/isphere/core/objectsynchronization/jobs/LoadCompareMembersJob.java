@@ -85,7 +85,7 @@ public class LoadCompareMembersJob extends AbstractCompareMembersJob {
         try {
 
             if (subMonitor.isCanceled()) {
-                cancelJob(handle);
+                cancelHostJob(handle);
                 return EMPTY_RESULT;
             }
 
@@ -159,7 +159,7 @@ public class LoadCompareMembersJob extends AbstractCompareMembersJob {
             while (resultSet.next()) {
 
                 if (localSubMonitor.isCanceled()) {
-                    cancelJob(handle);
+                    cancelHostJob(handle);
                     return EMPTY_RESULT;
                 }
 
@@ -218,29 +218,6 @@ public class LoadCompareMembersJob extends AbstractCompareMembersJob {
         int numMembers = new SYNCMBR_getNumberOfCompareElements().run(system, handle, mode.mode());
 
         return numMembers;
-    }
-
-    private void cancelJob(int handle) {
-
-        SqlHelper sqlHelper = getSqlHelper();
-
-        PreparedStatement preparedStatementUpdate = null;
-        try {
-            preparedStatementUpdate = getJdbcConnection()
-                .prepareStatement("UPDATE " + sqlHelper.getObjectName(getISphereLibrary(), "SYNCMBRS") + " SET XSCNL = '*YES' WHERE XSHDL = ?");
-            preparedStatementUpdate.setInt(1, handle);
-            preparedStatementUpdate.executeUpdate();
-        } catch (SQLException e) {
-            ISpherePlugin.logError("*** Could not cancel host job of load synchronize members job ***", e);
-        }
-        if (preparedStatementUpdate != null) {
-            try {
-                preparedStatementUpdate.close();
-            } catch (SQLException e1) {
-                e1.printStackTrace();
-            }
-        }
-
     }
 
 }

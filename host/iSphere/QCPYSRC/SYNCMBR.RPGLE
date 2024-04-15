@@ -33,10 +33,16 @@ end-ds;
 dcl-pr SYNCMBR_getHandle zoned(10: 0) extproc(*dclcase);
 end-pr;
 
-dcl-pr SYNCMBR_resolveGenericCompareElements extproc(*dclcase);
+dcl-pr SYNCMBR_resolveGenericFiles extproc(*dclcase);
+  i_handle       zoned(10: 0) const;
+  i_mode         char(10) const;
+end-pr;
+
+dcl-pr SYNCMBR_resolveGenericMembers extproc(*dclcase);
   i_handle       zoned(10: 0) const;
   i_mode         char(10) const;
   i_memberFilter char(1024) const;
+  i_isRegEx      ind const;
 end-pr;
 
 dcl-pr SYNCMBR_getNumberOfCompareElements zoned(6: 0) extproc(*dclcase);

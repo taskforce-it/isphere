@@ -9,15 +9,19 @@
 package biz.isphere.core.objectsynchronization.jobs;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 import org.eclipse.core.runtime.SubMonitor;
 
 import com.ibm.as400.access.AS400;
 
+import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.SqlHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.ISphereHelper;
+import biz.isphere.core.internal.MessageDialogAsync;
 
 /**
  * This class is the base class for all worker jobs that take part when
@@ -184,6 +188,38 @@ public abstract class AbstractCompareMembersJob {
         }
 
         subMonitor.done();
+    }
+
+    protected void cancel(int handle, Exception e) {
+
+        cancelHostJob(handle);
+
+        monitor.setCanceled(true);
+        ISpherePlugin.logError("*** Resolving members: Unexpected error. ***", e);
+        MessageDialogAsync.displayBlockingError(ExceptionHelper.getLocalizedMessage(e));
+    }
+
+    protected void cancelHostJob(int handle) {
+
+        SqlHelper sqlHelper = getSqlHelper();
+
+        PreparedStatement preparedStatementUpdate = null;
+        try {
+            preparedStatementUpdate = getJdbcConnection()
+                .prepareStatement("UPDATE " + sqlHelper.getObjectName(getISphereLibrary(), "SYNCMBRS") + " SET XSCNL = '*YES' WHERE XSHDL = ?");
+            preparedStatementUpdate.setInt(1, handle);
+            preparedStatementUpdate.executeUpdate();
+        } catch (SQLException e) {
+            ISpherePlugin.logError("*** Could not cancel host job of load synchronize members job ***", e);
+        }
+        if (preparedStatementUpdate != null) {
+            try {
+                preparedStatementUpdate.close();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+        }
+
     }
 
     protected abstract int getNumWorkItems();

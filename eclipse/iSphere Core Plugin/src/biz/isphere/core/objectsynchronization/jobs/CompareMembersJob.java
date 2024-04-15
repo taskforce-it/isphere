@@ -47,8 +47,11 @@ public class CompareMembersJob extends Job implements ICancelableJob {
         StartCompareMembersJob startMembersJob = new StartCompareMembersJob(subMonitor, sharedValues, input.getLeftObject(), input.getRightObject());
         workerJobs.add(startMembersJob);
 
-        ResolveGenericCompareElementsJob resolveGenericElementsJob = new ResolveGenericCompareElementsJob(subMonitor, sharedValues);
-        workerJobs.add(resolveGenericElementsJob);
+        ResolveGenericFilesJob resolveGenericFilesJob = new ResolveGenericFilesJob(subMonitor, sharedValues);
+        workerJobs.add(resolveGenericFilesJob);
+
+        ResolveGenericMembersJob resolveGenericMembersJob = new ResolveGenericMembersJob(subMonitor, sharedValues);
+        workerJobs.add(resolveGenericMembersJob);
 
         LoadCompareMembersJob loadMembersJob = new LoadCompareMembersJob(subMonitor, sharedValues);
         workerJobs.add(loadMembersJob);

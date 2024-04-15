@@ -73,10 +73,10 @@ dcl-proc DEMO11;
 
   // Simulate comparing members stored on different systems:
   // Read members on system A
-  g_handle_left = doCompare(MODE_LEFT: 'ISPHEREDVP': 'QRPGLESRC': '*');
+  g_handle_left = doCompare(MODE_LEFT: 'ISPHEREDVP': 'Q*SRC': '*');
 
   // Read members on system B
-  g_handle_right = doCompare(MODE_RIGHT: 'ISPHERE': 'QRPGLESRC': '*');
+  g_handle_right = doCompare(MODE_RIGHT: 'ISPHERE': 'Q*SRC': '*');
 
   // Now both results must be merged to finalize the compare.
 
@@ -128,7 +128,14 @@ dcl-proc doCompare;
   close SYNCMBRW;
 
   // Resolve *generic* elements
-  SYNCMBR_resolveGenericCompareElements(handle: i_mode: '');
+  // SYNCMBR_resolveGenericCompareElements(handle: i_mode: '');
+
+  // Resolve *generic* files
+  SYNCMBR_resolveGenericFiles(handle: i_mode);
+
+  // Resolve *generic* members
+  SYNCMBR_resolveGenericMembers(handle: i_mode: 'DEMO.{1,6}\.(PRT|DSP)F': *on);
+  // SYNCMBR_resolveGenericMembers(handle: i_mode: '<DEMO4.*': *on);
 
   // Get number of compare elements
   numElems = SYNCMBR_getNumberOfCompareElements(handle: i_mode);

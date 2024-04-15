@@ -40,8 +40,4 @@ dcl-pr ucase like(string_t) extproc('STRING_ucase');
   i_string       like(string_t) const;
 end-pr;
 
-dcl-pr kill extproc('STRING_kill');
-  i_text         varchar(128) value;
-end-pr;
-
 /endif

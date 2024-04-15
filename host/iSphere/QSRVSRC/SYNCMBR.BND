@@ -33,10 +33,11 @@
 
      /* Export */
              EXPORT     SYMBOL('SYNCMBR_getHandle')
-             EXPORT     SYMBOL('SYNCMBR_resolveGenericCompareElements')
              EXPORT     SYMBOL('SYNCMBR_getNumberOfCompareElements')
              EXPORT     SYMBOL('SYNCMBR_clear')
              EXPORT     SYMBOL('SYNCMBR_retrieveMemberAttributes')
+             EXPORT     SYMBOL('SYNCMBR_resolveGenericFiles')
+             EXPORT     SYMBOL('SYNCMBR_resolveGenericMembers')
 
      /* End Export */
              ENDPGMEXP

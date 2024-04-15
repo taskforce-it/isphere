@@ -33,8 +33,8 @@
 //          >>PARM<<  DBGVIEW(*NONE);
 //          >>PARM<<  RPGPPOPT(*LVL2);
 //          >>PARM<<  OPTION(*EVENTF);
-//          >>PARM<<  COMPILEOPT('OPTIMIZE(*FULL)');
-//          --PARM<<  COMPILEOPT('OPTIMIZE(*NONE) DBGVIEW(*LIST)');
+//          --PARM<<  COMPILEOPT('OPTIMIZE(*FULL)');
+//          >>PARM<<  COMPILEOPT('OPTIMIZE(*NONE) DBGVIEW(*LIST)');
 //        >>END-COMPILE<<
 //        >>EXECUTE<<
 //    >>END-PRE-COMPILER<<
@@ -63,59 +63,101 @@ ctl-opt NoMain;
 /include QCPYSRC,OBJL0200    // Data structure for format 'OBJL0200' for procedure 'QUSLOBJ'
 /include QCPYSRC,QDBRTVFD    // Retrieve Database File Description (QDBRTVFD) API
 /include QCPYSRC,IFSIO_H     // IFC C Header
+/include QCPYSRC,REGEX       // Regular expression functions
+/include QCPYSRC,ICONV       // Character translation functions
+/include QCPYSRC,QUSRJOBI    // Procedure prototype for procedure 'QUSRJOBI'
+/include QCPYSRC,LOCALE      // Locale functions
+/include QCPYSRC,QMHSNDPM    // Send Program Message (QMHSNDPM) API
+/include QCPYSRC,ERRC0100    // Format ERRC0100
 
-// Global Type Definitions
-dcl-ds syncmbrw_t extname('SYNCMBRW': *all) qualified end-ds;
+// Global type definitions
 
-dcl-ds updatedAttrs_t qualified template;
-  exists        ind;
-  srcType       char(10);
-  checkSum      like(crc32_checkSum_t);
-  lastChanged   timestamp;
+dcl-s pattern_t varchar(1024) template;
+
+dcl-ds hIconv_t qualified template;
+  isInit     ind;
+  job_ccsid  int(10);
+  nl_ccsid   int(10);
+  iconv      likeds(iconv_t);
+end-ds;
+
+dcl-ds hRegex_t qualified template;
+  isInit     ind;
+  regex      likeds(regex_t);
 end-ds;
 
 // Internal prototypes for lower/upper case names
 
-dcl-pr buildPath varchar(256) extproc('buildPath');
+dcl-pr buildPath varchar(256) extproc(*dclcase);
   i_library      varchar(10) Options(*trim) const;
   i_file         varchar(10) Options(*trim) const;
   i_member       varchar(10) Options(*trim) const;
 end-pr;
 
-dcl-pr calculateChecksum like(crc32_checkSum_t) extproc('calculateChecksum');
+dcl-pr calculateChecksum like(crc32_checkSum_t) extproc(*dclcase);
   i_path         varchar(256) Options(*trim) const;
 end-pr;
 
-dcl-pr crtUsrSpc likeds(errCode_t) extproc('crtUsrSpc');
+dcl-pr crtUsrSpc likeds(errCode_t) extproc(*dclcase);
   i_qUsrSpc      likeds(qObj_t) const;
 end-pr;
 
-dcl-pr cvtApiTimestampToRpg timestamp extproc('cvtApiTimestampToRpg');
+dcl-pr cvtApiTimestampToRpg timestamp extproc(*dclcase);
   i_apiTimestamp char(13) const;
 end-pr;
 
-dcl-pr dltUsrSpc extproc('dltUsrSpc');
+dcl-pr dltUsrSpc extproc(*dclcase);
   i_qUsrSpc      likeds(qObj_t) const;
 end-pr;
 
-dcl-pr isCanceled ind extproc('isCanceled');
+dcl-pr isCanceled ind extproc(*dclcase);
   i_handle         int(10) const;
 end-pr;
 
-dcl-pr resolveGenericFiles extproc('resolveGenericFiles');
-  i_handle       zoned(10: 0) const;
-  i_mode         char(10) const;
-end-pr;
-
-dcl-pr resolveGenericMembers extproc('resolveGenericMembers');
-  i_handle       zoned(10: 0) const;
-  i_mode         char(10) const;
-  i_memberFilter char(1024) const;
-end-pr;
-
-dcl-pr updateStatus extproc('updateStatus');
+dcl-pr updateStatusResolvedFiles extproc(*dclcase);
   i_handle         int(10) const;
   i_count          int(10) const;
+end-pr;
+
+dcl-pr updateStatusResolvedMembers extproc(*dclcase);
+  i_handle         int(10) const;
+  i_count          int(10) const;
+end-pr;
+
+dcl-pr updateStatusMembersFound extproc(*dclcase);
+  i_handle         int(10) const;
+  i_count          int(10) const;
+end-pr;
+
+dcl-pr retrieveJobCcsid int(10);
+end-pr;
+
+dcl-pr initIconv likeds(hIconv_t) extproc(*dclcase);
+end-pr;
+
+dcl-pr freeIconv extproc(*dclcase);
+  io_hIconv        likeds(hIconv_t);
+end-pr;
+
+dcl-pr cvtCcsid like(string_t) extproc(*dclcase);
+  i_string         like(string_t) value;
+end-pr;
+
+dcl-pr initRegex likeds(hRegex_t) extproc(*dclcase);
+  i_pattern        like(string_t) const;
+end-pr;
+
+dcl-pr freeRegex extproc(*dclcase);
+  io_hRegex        likeds(hRegex_t);
+end-pr;
+
+dcl-pr matchRegex ind extproc(*dclcase);
+  i_string         like(string_t) const;
+  io_hRegex        likeds(hRegex_t);
+end-pr;
+
+dcl-pr kill extproc(*dclcase);
+  i_text         varchar(128) value;
 end-pr;
 
 // Other External Prototypes
@@ -135,7 +177,9 @@ dcl-pr strerror pointer extproc('strerror');
   i_errno        int(10) value;
 end-pr;
 
-dcl-s g_countResolvedMembers int(10);
+// Global values
+
+dcl-ds g_hIconv likeds(hIconv_t) inz;
 
 // ==========================================================================================
 //  Get Handle
@@ -160,15 +204,28 @@ dcl-proc SYNCMBR_getHandle export;
     SYNCMBRS
       (
        XSHDL,
-       XSCNT,
+       XSCNTFILE,
+       XSCNTMBR,
+       XSCNTFND,
        XSCNL
       )
     VALUES
       (
        :handle,
        0,
+       0,
+       0,
        '*NO'
       );
+
+  // Initialize character translation
+  if (g_hIconv.isInit and g_hIconv.job_ccsid <> retrieveJobCcsid());
+    freeIconv(g_hiconv);
+  endif;
+
+  if (not g_hIconv.isInit);
+    g_hIconv = initIconv();
+  endif;
 
   // Leave procedure
   return handle;
@@ -176,158 +233,16 @@ dcl-proc SYNCMBR_getHandle export;
 end-proc;
 
 // ==========================================================================================
-//  Resolve Generic Elements.
+//  Resolves Generic Files.
 // ==========================================================================================
 
-dcl-proc SYNCMBR_resolveGenericCompareElements export;
-  dcl-pi *n;
-    i_handle       zoned(10: 0) const;
-    i_mode         char(10) const;
-    i_memberFilter char(1024) const;
-  end-pi;
-
-  // ----------------------------------------------------------------------------------------
-
-  g_countResolvedMembers = 0;
-
-  resolveGenericFiles(i_handle: i_mode);
-
-  resolveGenericMembers(i_handle: i_mode: i_memberFilter);
-
-end-proc;
-
-// ==========================================================================================
-//  Get Number Of Compare Elements
-// ==========================================================================================
-
-dcl-proc SYNCMBR_getNumberOfCompareElements export;
-  dcl-pi *n zoned(6: 0);
-    i_handle       zoned(10: 0) const;
-    i_mode         char(10) const;
-  end-pi;
-
-  // Local field declarations
-  dcl-s numElems zoned(6: 0);
-
-  // ----------------------------------------------------------------------------------------
-
-  // Initialize 'Number of elements'
-  numElems = 0;
-
-  // Get number of elements
-  select;
-  when (i_mode = MODE_LEFT);
-    Exec SQL
-      SELECT
-        COUNT(*)
-      INTO
-        :numElems
-      FROM
-        SYNCMBRW
-      WHERE
-        XWHDL = :i_handle AND XWLEFTLIB <> '';
-
-  when (i_mode = MODE_RIGHT);
-    Exec SQL
-      SELECT
-        COUNT(*)
-      INTO
-        :numElems
-      FROM
-        SYNCMBRW
-      WHERE
-        XWHDL = :i_handle AND XWRGHTLIB <> '';
-
-  other;
-    // TODO: incorrect mode
-  endsl;
-
-   return numElems;
-
-end-proc;
-
-// ==========================================================================================
-//  Clear synchronisation data.
-// ==========================================================================================
-
-dcl-proc SYNCMBR_clear export;
-  dcl-pi *n;
-    i_handle       zoned(10: 0) const;
-  end-pi;
-
-  // ----------------------------------------------------------------------------------------
-
-  // Clear file 'Status'
-  Exec SQL
-    DELETE FROM
-      SYNCMBRS
-    WHERE
-      XSHDL = :i_handle;
-
-  // Clear file 'Work'
-  Exec SQL
-    DELETE FROM
-      SYNCMBRW
-    WHERE
-      XWHDL = :i_handle;
-
-end-proc;
-
-// ==========================================================================================
-//  Retrieve the attributes of a given member.
-// ==========================================================================================
-
-dcl-proc SYNCMBR_retrieveMemberAttributes export;
-  dcl-pi *n likeds(mbrAttrs_t);
-    i_library      char(10) Options(*trim) const;
-    i_file         char(10) Options(*trim) const;
-    i_member       char(10) Options(*trim) const;
-  end-pi;
-
-  // Return value
-  dcl-ds mbrAttrs likeds(mbrAttrs_t);
-
-  dcl-ds qFile likeds(qObj_t) inz;
-  dcl-ds errCode likeds(errCode_t) inz(*likeds);
-  dcl-ds mbrd0100 likeds(mbrd0100_t) inz;
-  // ----------------------------------------------------------------------------------------
-
-  qFile.name = i_file;
-  qFile.lib = i_library;
-
-  Reset errCode;
-    QUSRMBRD(
-      mbrd0100 :        // --> Receiver variable
-      %size(mbrd0100):  // --> Size of receiver variable
-      'MBRD0100' :      // --> Format name
-      qFile :           // --> Qual. file
-      i_member :        //  --> Member name
-      '0' :             // --> Override process
-      errCode           // <-> Error code
-      );
-
-  clear mbrAttrs;
-  mbrAttrs.file = i_file;
-  mbrAttrs.library = i_library;
-  mbrAttrs.member = i_member;
-  mbrAttrs.srcType = mbrd0100.srcType;
-  mbrAttrs.text = mbrd0100.text;
-  mbrAttrs.lastChanged = cvtApiTimestampToRpg(mbrd0100.srcChgDatTim);
-  mbrAttrs.checkSum = calculateChecksum(buildPath(i_library: i_file: i_member));
-
-  return mbrAttrs;
-
-end-proc;
-
-// ==========================================================================================
-//  Resolves Generic File Selection items. For example: 'Q*'.
-// ==========================================================================================
-
-dcl-proc resolveGenericFiles;
+dcl-proc SYNCMBR_resolveGenericFiles export;
   dcl-pi *n;
     i_handle       zoned(10: 0) const;
     i_mode         char(10) const;
   end-pi;
+
+  // ----------------------------------------------------------------------------------------
 
   // Local field declarations
   dcl-ds SYNCMBRWRF extname('SYNCMBRW') qualified inz end-ds;
@@ -345,6 +260,13 @@ dcl-proc resolveGenericFiles;
   dcl-s isSourceFile ind;
   dcl-ds errCode likeds(errCode_t) inz(*likeds);
 
+  dcl-s countFilesResolved int(10);
+
+  dcl-ds lastUpdateFilesResolved qualified inz;
+    time    timestamp;
+    count   int(10);
+  end-ds;
+
   // ----------------------------------------------------------------------------------------
 
   // Declare cursor
@@ -358,8 +280,10 @@ dcl-proc resolveGenericFiles;
            SYNCMBRW
         WHERE
            XWHDL = :i_handle AND
-            ((TRIM(XWLEFTFILE) LIKE '*%' OR TRIM(XWLEFTFILE) LIKE '%*' OR XWLEFTFILE = '*') or
-             (TRIM(XWRGHTFILE) LIKE '*%' OR TRIM(XWRGHTFILE) LIKE '%*' OR XWRGHTFILE = '*'))
+            ((TRIM(XWLEFTFILE) LIKE '*%' OR TRIM(XWLEFTFILE) LIKE '%*' OR
+              TRIM(XWLEFTFILE) LIKE '%*%' OR XWLEFTFILE = '*') or
+             (TRIM(XWRGHTFILE) LIKE '*%' OR TRIM(XWRGHTFILE) LIKE '%*' OR
+              TRIM(XWRGHTFILE) LIKE '%*%' OR XWRGHTFILE = '*'))
         FOR UPDATE;
 
   // Open cursor
@@ -367,7 +291,10 @@ dcl-proc resolveGenericFiles;
      OPEN
         GENERIC_FILES;
 
-  dow (*on);
+  clear lastUpdateFilesResolved;
+  lastUpdateFilesResolved.time = %timestamp();
+
+  dow (not isCanceled(i_handle));
 
     // Fetch from cursor
     Exec SQL
@@ -393,6 +320,20 @@ dcl-proc resolveGenericFiles;
        WHERE
           CURRENT OF
              GENERIC_FILES;
+
+    // Update each 1500 milliseconds
+    countFilesResolved += 1;
+    if (%diff(%timestamp(): lastUpdateFilesResolved.time: *mseconds) > 1500);
+
+      // Update file 'Status': Count Files
+      updateStatusResolvedFiles(i_handle: countFilesResolved);
+      lastUpdateFilesResolved.count = countFilesResolved;
+
+      if (isCanceled(i_handle));
+        leave;
+      endif;
+
+    endif;
 
     // Create user space
     qUsrSpc.name = 'SYNCMBR';
@@ -546,6 +487,9 @@ dcl-proc resolveGenericFiles;
 
 on-exit;
 
+  // Report "Done" to plug-in
+  updateStatusResolvedFiles(i_handle: -1);
+
   // Close cursor
   Exec SQL
      CLOSE
@@ -554,16 +498,18 @@ on-exit;
 end-proc;
 
 // ==========================================================================================
-//  Resolves Generic Member Selection items. For example: 'DEMO*'.
-//  Calculates and updates the CRC32 checksum of the selected items.
+//  Resolves Generic Members.
 // ==========================================================================================
 
-dcl-proc resolveGenericMembers;
+dcl-proc SYNCMBR_resolveGenericMembers export;
   dcl-pi *n;
     i_handle       zoned(10: 0) const;
     i_mode         char(10) const;
     i_memberFilter char(1024) const;
+    i_isRegEx      ind const;
   end-pi;
+
+  // ----------------------------------------------------------------------------------------
 
   // Local field declarations
   dcl-ds SYNCMBRWRF extname('SYNCMBRW') qualified inz end-ds;
@@ -591,23 +537,43 @@ dcl-proc resolveGenericMembers;
 
   dcl-s parts varchar(10) dim(2);
 
-  dcl-s regexFilter varchar(1024);
+  dcl-s pattern like(pattern_t);
+  dcl-ds hRegex likeds(hRegex_t) inz;
 
   dcl-s i int(10);
   dcl-s isNegated ind;
   dcl-s isFound ind;
-  dcl-s cancel char(10);
   dcl-s fullMemberName varchar(21);
   dcl-s memberNameMask varchar(21);
 
-  dcl-s lastCountResolvedMembers like(g_countResolvedMembers);
+  dcl-s countMembersResolved int(10);
+
+  dcl-ds lastUpdateMembersResolved qualified inz;
+    time    timestamp;
+    count   int(10);
+  end-ds;
+
+  dcl-s countMembersFound int(10);
+
+  dcl-ds lastUpdateFound qualified inz;
+    time    timestamp;
+    count   int(10);
+  end-ds;
 
   // ----------------------------------------------------------------------------------------
 
-  if (startsWith('<': i_memberFilter));
-    // TODO: implement regex filter
-    regexFilter = i_memberFilter;
+  if (i_isRegEx);
+    if (%len(i_memberFilter) >= 2);
+      pattern = %trimr(i_memberFilter);
+      hRegex = initRegex(pattern);
+    else;
+      pattern = '';
+      clear hRegex;
+      hRegex.isInit = *off;
+    endif;
   else;
+    clear hRegex;
+    hRegex.isInit = *off;
     numFilters = 0;
     isNegated = *off;
     for-each filterItem in %split(i_memberFilter: FILTER_DELIMITER_CHARS);
@@ -660,7 +626,7 @@ dcl-proc resolveGenericMembers;
            SYNCMBRW
         WHERE
            XWHDL = :i_handle AND
-           (TRIM(XWMBR) LIKE '*%' OR TRIM(XWMBR) LIKE '%*' OR XWMBR = '*')
+           (TRIM(XWMBR) LIKE '*%' OR TRIM(XWMBR) LIKE '%*' OR TRIM(XWMBR) LIKE '%*%' OR XWMBR = '*')
         FOR UPDATE;
 
   // Open cursor
@@ -668,7 +634,13 @@ dcl-proc resolveGenericMembers;
      OPEN
         GENERIC_MEMBERS;
 
-  dow (*on);
+  clear lastUpdateMembersResolved;
+  lastUpdateMembersResolved.time = %timestamp();
+
+  clear lastUpdateFound;
+  lastUpdateFound.time = %timestamp();
+
+  dow (not isCanceled(i_handle));
 
     // Fetch from cursor
     Exec SQL
@@ -682,11 +654,6 @@ dcl-proc resolveGenericMembers;
       leave;
     endif;
 
-    // Check if process has to be canceled
-    if (isCanceled(i_handle));
-      leave;
-    endif;
-
     // Delete generic input element
     Exec SQL
        DELETE FROM
@@ -694,6 +661,20 @@ dcl-proc resolveGenericMembers;
        WHERE
           CURRENT OF
              GENERIC_MEMBERS;
+
+    // Update each 1500 milliseconds
+    countMembersResolved += 1;
+    if (%diff(%timestamp(): lastUpdateMembersResolved.time: *mseconds) > 1500);
+
+      // Update file 'Status': Count Resolved Members
+      updateStatusResolvedMembers(i_handle: countMembersResolved);
+      lastUpdateMembersResolved.count = countMembersResolved;
+
+      if (isCanceled(i_handle));
+        leave;
+      endif;
+
+    endif;
 
     // Create user space
     qUsrSpc.name = 'SYNCMBR';
@@ -746,19 +727,6 @@ dcl-proc resolveGenericMembers;
 
           for counter = 1 To GHDRNbrEtry;
 
-           g_countResolvedMembers += 1;
-           if (%rem(g_countResolvedMembers: 100) = 0);
-
-             // Update file 'Status'
-             updateStatus(i_handle: g_countResolvedMembers);
-             lastCountResolvedMembers = g_countResolvedMembers;
-
-             if (isCanceled(i_handle));
-               leave;
-             endif;
-
-           endif;
-
             // Set pointer of list area
             MBRL0320Ptr =
               pUsrSpc +                       // Addr. user space
@@ -785,49 +753,57 @@ dcl-proc resolveGenericMembers;
 
             // Check non-negated patterns:
             isFound = *off;
-            for i = 1 to numFilters;
-              if (nameTypeFilter(i).isNegated);
+            if (i_isRegEx);
+              // Compare using regular expression
+              isFound = matchRegex(fullMemberName: hRegex);
+            else;
+              // String compare
+              for i = 1 to numFilters;
+                if (nameTypeFilter(i).isNegated);
+                  iter;
+                endif;
+
+                memberNameMask = nameTypeFilter(i).name + '.' + nameTypeFilter(i).srcType;
+                isFound = matches(memberNameMask: fullMemberName);
+                if (isFound);
+                  leave;
+                endif;
+              endfor;
+
+              if (not isFound);
                 iter;
               endif;
 
-              memberNameMask = nameTypeFilter(i).name + '.' + nameTypeFilter(i).srcType;
+              // Check negated patterns:
+              for i = 1 to numFilters;
+                if (not nameTypeFilter(i).isNegated);
+                  iter;
+                endif;
 
-              if (nameTypeFilter(i).isNegated);
+                memberNameMask = nameTypeFilter(i).name + '.' + nameTypeFilter(i).srcType;
                 isFound = not (matches(memberNameMask: fullMemberName));
-              else;
-                isFound = matches(memberNameMask: fullMemberName);
-              endif;
-
-              if (isFound);
-                leave;
-              endif;
-            endfor;
+                if (isFound);
+                  leave;
+                endif;
+              endfor;
+            endif;
 
             if (not isFound);
               iter;
             endif;
 
-            // Check negated patterns:
-            for i = 1 to numFilters;
-              if (not nameTypeFilter(i).isNegated);
-                iter;
-              endif;
+            // Update each 1500 milliseconds
+            countMembersFound += 1;
+            if (%diff(%timestamp(): lastUpdateFound.time: *mseconds) > 1500);
 
-              memberNameMask = nameTypeFilter(i).name + '.' + nameTypeFilter(i).srcType;
+              // Update file 'Status': Count Members Found
+              updateStatusMembersFound(i_handle: countMembersFound);
+              lastUpdateFound.count = countMembersFound;
 
-              if (nameTypeFilter(i).isNegated);
-                isFound = not (matches(memberNameMask: fullMemberName));
-              else;
-                isFound = matches(memberNameMask: fullMemberName);
-              endif;
-
-              if (isFound);
+              if (isCanceled(i_handle));
                 leave;
               endif;
-            endfor;
 
-            if (not isFound);
-              iter;
             endif;
 
             // Append record to work file.
@@ -902,24 +878,148 @@ dcl-proc resolveGenericMembers;
 
     endif;
 
-    // Compare has to be canceled
-    if (cancel = '*YES');
-      leave;
-    endif;
-
   enddo;
 
-  if (lastCountResolvedMembers <> g_countResolvedMembers);
-    updateStatus(i_handle: g_countResolvedMembers);
-    lastCountResolvedMembers = g_countResolvedMembers;
+  if (lastUpdateFound.count <> countMembersFound);
+    updateStatusMembersFound(i_handle: countMembersFound);
+    lastUpdateFound.count = countMembersFound;
   endif;
 
 on-exit;
+
+  updateStatusResolvedMembers(i_handle: -1);
+
+  if (hRegex.isInit);
+    freeRegex(hRegex);
+  endif;
 
   // Close cursor
   Exec SQL
      CLOSE
         GENERIC_MEMBERS;
+
+end-proc;
+
+// ==========================================================================================
+//  Returns The Total Number Of Compare Members. (equals members found)
+// ==========================================================================================
+
+dcl-proc SYNCMBR_getNumberOfCompareElements export;
+  dcl-pi *n zoned(6: 0);
+    i_handle       zoned(10: 0) const;
+    i_mode         char(10) const;
+  end-pi;
+
+  // Local field declarations
+  dcl-s numElems zoned(6: 0);
+
+  // ----------------------------------------------------------------------------------------
+
+  // Initialize 'Number of elements'
+  numElems = 0;
+
+  // Get number of elements
+  select;
+  when (i_mode = MODE_LEFT);
+    Exec SQL
+      SELECT
+        XSCNTFND
+      INTO
+        :numElems
+      FROM
+        SYNCMBRS
+      WHERE
+        XSHDL = :i_handle;
+
+  when (i_mode = MODE_RIGHT);
+    Exec SQL
+      SELECT
+        XSCNTFND
+      INTO
+        :numElems
+      FROM
+        SYNCMBRS
+      WHERE
+        XSHDL = :i_handle;
+
+  other;
+    // TODO: incorrect mode
+  endsl;
+
+   return numElems;
+
+end-proc;
+
+// ==========================================================================================
+//  Clear synchronisation data.
+// ==========================================================================================
+
+dcl-proc SYNCMBR_clear export;
+  dcl-pi *n;
+    i_handle       zoned(10: 0) const;
+  end-pi;
+
+  // ----------------------------------------------------------------------------------------
+
+  // Clear file 'Status'
+  Exec SQL
+    DELETE FROM
+      SYNCMBRS
+    WHERE
+      XSHDL = :i_handle;
+
+  // Clear file 'Work'
+  Exec SQL
+    DELETE FROM
+      SYNCMBRW
+    WHERE
+      XWHDL = :i_handle;
+
+end-proc;
+
+// ==========================================================================================
+//  Retrieve the attributes of a given member.
+// ==========================================================================================
+
+dcl-proc SYNCMBR_retrieveMemberAttributes export;
+  dcl-pi *n likeds(mbrAttrs_t);
+    i_library      char(10) Options(*trim) const;
+    i_file         char(10) Options(*trim) const;
+    i_member       char(10) Options(*trim) const;
+  end-pi;
+
+  // Return value
+  dcl-ds mbrAttrs likeds(mbrAttrs_t);
+
+  dcl-ds qFile likeds(qObj_t) inz;
+  dcl-ds errCode likeds(errCode_t) inz(*likeds);
+  dcl-ds mbrd0100 likeds(mbrd0100_t) inz;
+  // ----------------------------------------------------------------------------------------
+
+  qFile.name = i_file;
+  qFile.lib = i_library;
+
+  Reset errCode;
+    QUSRMBRD(
+      mbrd0100 :        // --> Receiver variable
+      %size(mbrd0100):  // --> Size of receiver variable
+      'MBRD0100' :      // --> Format name
+      qFile :           // --> Qual. file
+      i_member :        //  --> Member name
+      '0' :             // --> Override process
+      errCode           // <-> Error code
+      );
+
+  clear mbrAttrs;
+  mbrAttrs.file = i_file;
+  mbrAttrs.library = i_library;
+  mbrAttrs.member = i_member;
+  mbrAttrs.srcType = mbrd0100.srcType;
+  mbrAttrs.text = mbrd0100.text;
+  mbrAttrs.lastChanged = cvtApiTimestampToRpg(mbrd0100.srcChgDatTim);
+  mbrAttrs.checkSum = calculateChecksum(buildPath(i_library: i_file: i_member));
+
+  return mbrAttrs;
 
 end-proc;
 
@@ -1102,10 +1202,10 @@ dcl-proc dltUsrSpc;
 end-proc;
 
 // ==========================================================================================
-//  Updates the status field of the result table.
+//  Updates the number of resolved generic file entries.
 // ==========================================================================================
 
-dcl-proc updateStatus;
+dcl-proc updateStatusResolvedFiles;
   dcl-pi *n;
     i_handle         int(10) const;
     i_count          int(10) const;
@@ -1113,12 +1213,58 @@ dcl-proc updateStatus;
 
   // ----------------------------------------------------------------------------------------
 
-  // Update file 'Status'
+  // Update file 'Status': resolved members
   Exec SQL
     UPDATE
       SYNCMBRS
     SET
-      XSCNT = :i_count
+      XSCNTFILE = :i_count
+    WHERE
+      XSHDL = :i_handle;
+
+end-proc;
+
+// ==========================================================================================
+//  Updates the number of resolved generic member entries.
+// ==========================================================================================
+
+dcl-proc updateStatusResolvedMembers;
+  dcl-pi *n;
+    i_handle         int(10) const;
+    i_count          int(10) const;
+  end-pi;
+
+  // ----------------------------------------------------------------------------------------
+
+  // Update file 'Status': resolved members
+  Exec SQL
+    UPDATE
+      SYNCMBRS
+    SET
+      XSCNTMBR = :i_count
+    WHERE
+      XSHDL = :i_handle;
+
+end-proc;
+
+// ==========================================================================================
+//  Updates the number of total members found.
+// ==========================================================================================
+
+dcl-proc updateStatusMembersFound;
+  dcl-pi *n;
+    i_handle         int(10) const;
+    i_count          int(10) const;
+  end-pi;
+
+  // ----------------------------------------------------------------------------------------
+
+  // Update file 'Status': resolved members
+  Exec SQL
+    UPDATE
+      SYNCMBRS
+    SET
+      XSCNTFND = :i_count
     WHERE
       XSHDL = :i_handle;
 
@@ -1161,6 +1307,275 @@ dcl-proc isCanceled;
     endif;
 
     return isCanceled;
+
+end-proc;
+
+// ==========================================================================================
+//  Retrieves the job ccsid.
+// ==========================================================================================
+
+dcl-proc retrieveJobCcsid;
+  dcl-pi *n int(10);
+  end-pi;
+
+  // Return value
+  dcl-s jobCcsid int(10);
+
+  // Local field declarations
+  dcl-ds qJob likeds(qJob_t) inz;
+  dcl-ds jobi0400 likeds(jobi0400_t) inz;
+
+  // ----------------------------------------------------------------------------------------
+
+    clear qJob;
+    qJob.name = '*';
+
+    QUSRJOBI(jobi0400: %size(jobi0400): 'JOBI0400': qJob: '');
+
+    jobCcsid = jobi0400.ccsid;
+
+    return jobCcsid;
+
+end-proc;
+
+// ==========================================================================================
+//  Initializes character translation.
+// ==========================================================================================
+
+dcl-proc initIconv;
+  dcl-pi *n likeds(hIconv_t);
+  end-pi;
+
+  // Return value
+  dcl-ds hIconv likeds(hIconv_t) inz;
+
+  // Local field declarations
+  dcl-ds from likeds(QtqCode_t) inz;
+  dcl-ds to likeds(QtqCode_t) inz;
+
+  dcl-c DIGITS const(%len(hIconv.nl_ccsid));
+  dcl-c DECPOS const(%decpos(hIconv.nl_ccsid));
+
+  // ----------------------------------------------------------------------------------------
+
+    clear hIconv;
+    hIconv.isInit = *off;
+
+    hIconv.job_ccsid = retrieveJobCcsid();
+    hIconv.nl_ccsid = %dec(%str(nl_langinfo(CODESET)): DIGITS: DECPOS);
+
+    if (hIconv.job_ccsid = hIconv.nl_ccsid);
+        return hIconv;
+    endif;
+
+    from.CCSID = hIconv.job_ccsid;
+    from.ConvAlt = 0;    // Conversion alternative
+    from.SubsAlt = 0;    // Substitution alternative
+    from.ShiftAlt = 1;   // Shift-state alternative
+    from.InpLenOp = 0;   // Input length option
+    from.ErrorOpt = 1;   // Error option for mixed data
+    from.Reserved = *ALLx'00';
+
+    to.CCSID = hIconv.nl_ccsid;
+    to.ConvAlt = 0;      // Conversion alternative
+    to.SubsAlt = 0;      // Substitution alternative
+    to.ShiftAlt = 1;     // Shift-state alternative
+    to.InpLenOp = 0;     // Input length option
+    to.ErrorOpt = 1;     // Error option for mixed data
+    to.Reserved = *ALLx'00';
+
+    hIconv.iconv = QtqIconvOpen(to: from);
+
+    hIconv.isInit = *on;
+
+    return hIconv;
+
+end-proc;
+
+// ==========================================================================================
+//  Frees resources allcocated by the character translation service.
+// ==========================================================================================
+
+dcl-proc freeIconv;
+  dcl-pi *n;
+    io_hIconv        likeds(hIconv_t);
+  end-pi;
+
+  // ----------------------------------------------------------------------------------------
+
+  if (not io_hIconv.isInit);
+    return;
+  endif;
+
+  iconv_close(io_hIconv.iconv);
+
+  clear io_hIconv;
+  io_hIconv.isInit = *off;
+
+end-proc;
+
+// ==========================================================================================
+//  Frees resources allcocated by the character translation service.
+// ==========================================================================================
+
+dcl-proc cvtCcsid;
+  dcl-pi *n like(string_t);
+    i_string         like(string_t) value;
+  end-pi;
+
+  // Return value
+  dcl-s string like(string_t) inz;
+
+  dcl-s rc int(10);
+  dcl-s bufferSize uns(10);
+  dcl-s inBytesLeft uns(10);
+  dcl-s outBytesLeft uns(10);
+  dcl-s outBuffer char(512);
+  dcl-s outLength int(10);
+  dcl-s pInBuf pointer;
+  dcl-s pOutBuf pointer;
+
+  // ----------------------------------------------------------------------------------------
+
+  if (not g_hIconv.isInit);
+    return i_string;
+  endif;
+
+  bufferSize = %size(outBuffer);
+  inBytesLeft = %len(%trimR(i_string));
+  outBytesLeft = bufferSize;
+  pInBuf = %addr(i_string: *data);
+  pOutBuf= %addr(outBuffer);
+  rc = iconv(g_hIconv.iconv: pInBuf: inBytesLeft: pOutBuf: outBytesLeft);
+  if (rc <> 0);
+    kill('cvtCcsid: iconv() returned error code ' + %char(rc));
+  endif;
+
+  outLength = bufferSize - outBytesLeft;
+
+  string = %subst(outBuffer: 1: outLength);
+
+  return string;
+
+end-proc;
+
+// ==========================================================================================
+//  Compiles a regular expression pattern.
+// ==========================================================================================
+
+dcl-proc initRegex;
+  dcl-pi *n likeds(hRegex_t);
+    i_pattern        like(string_t) const;
+  end-pi;
+
+  // Return value
+  dcl-ds hRegex likeds(hRegex_t) inz;
+
+  dcl-s rc int(10);
+  dcl-s cflags int(10);
+  dcl-s pattern like(i_pattern);
+
+  // ----------------------------------------------------------------------------------------
+
+  clear hRegex;
+
+  pattern = cvtCcsid(i_pattern);
+
+  cflags = REG_EXTENDED + REG_ICASE;
+  rc = regcomp(hRegex.regex: pattern: cflags);
+  if (rc <> 0);
+    kill('initRegex: regcomp() returned error code ' + %char(rc));
+  endif;
+
+  hRegex.isInit = *on;
+
+  return hRegex;
+
+end-proc;
+
+// ==========================================================================================
+//  Frees all resources allocated by regular expressions.
+// ==========================================================================================
+
+dcl-proc freeRegex;
+  dcl-pi *n;
+    io_hRegex        likeds(hRegex_t);
+  end-pi;
+
+  // ----------------------------------------------------------------------------------------
+
+  if (not io_hRegex.isInit);
+    return;
+  endif;
+
+  regfree(io_hRegex.regex);
+
+  clear io_hRegex;
+  io_hRegex.isInit = *off;
+
+end-proc;
+
+// ==========================================================================================
+//  Frees resources allcocated by the character translation service.
+// ==========================================================================================
+
+dcl-proc matchRegex;
+  dcl-pi *n ind;
+    i_string         like(string_t) const;
+    io_hRegex        likeds(hRegex_t);
+  end-pi;
+
+  // Return value
+  dcl-s isMatch ind;
+
+  dcl-s rc int(10);
+  dcl-s nmatch uns(10) inz(1);
+  dcl-ds regmatch likeds(regmatch_t) inz;
+  dcl-s error char(256);
+  dcl-s string like(i_string);
+
+  // ----------------------------------------------------------------------------------------
+
+  string = cvtCcsid(i_string);
+  rc = regexec(io_hRegex.regex: string: nmatch: regmatch: 0);
+
+  select;
+  when rc = 0;             // found!
+    isMatch = *on;
+  when rc = REG_NOMATCH;   // not found
+    isMatch = *off;
+  other;                   // error!
+    regerror(rc: io_hRegex: %addr(error): %size(error));
+    kill('matchRegex: regcomp() returned error code ' + %char(rc));
+  endsl;
+
+  return isMatch;
+
+end-proc;
+
+// ==========================================================================================
+//  Kills the program by sending an *ESCAPE message to the calling program.
+// ==========================================================================================
+dcl-proc kill;
+  dcl-pi *n;
+    i_text         varchar(128) value;
+  end-pi;
+
+  // Local fields
+  dcl-s msgKey char(4);
+
+  dcl-ds qMsgF likeds(qObj_t);
+
+  // ------------------------------------------------------------------------------------------
+
+  clear qMsgF;
+  qMsgF.name = 'QCPFMSG';
+  qMsgF.lib  = '*LIBL';
+
+  clear ERRC0100;
+
+  QMHSNDPM('CPF9897': qMsgF: i_text: %len(i_text): QMH_MT_ESCAPE
+           : QMH_CSE_CTLBDY: 1: msgKey: ERRC0100);
 
 end-proc;
 

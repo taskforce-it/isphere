@@ -26,8 +26,8 @@ import biz.isphere.core.objectsynchronization.SYNCMBR_getHandle;
  * The compare members jobs are executed in the following sequence:
  * <ol>
  * <li>{@link StartCompareMembersJob}
- * <li>{@link ResolveGenericCompareElementsJob}
- * <li>{@link UpdateCompareElementsJob}
+ * <li>{@link ResolveGenericFilesJob}
+ * <li>{@link ResolveGenericMembersJob}
  * <li>{@link LoadCompareMembersJob}
  * <li>{@link FinishCompareMembersJob}
  * </ol>

@@ -35,6 +35,10 @@ ctl-opt NoMain;
 /include QCPYSRC,ERRC0100
 /include QCPYSRC,QLGCNVCS
 
+dcl-pr kill extproc(*dclcase);
+  i_text         varchar(128) value;
+end-pr;
+
 // ==========================================================================================
 //  Tests if the specified string starts with the specified prefix.
 // ==========================================================================================

@@ -578,7 +578,7 @@ public class SynchronizeMembersJob extends Job implements ICancelableJob, IValid
     }
 
     private void debug(String message) {
-        System.out.println(message);
+        // System.out.println(message);
     }
 
     private class SyncResult {

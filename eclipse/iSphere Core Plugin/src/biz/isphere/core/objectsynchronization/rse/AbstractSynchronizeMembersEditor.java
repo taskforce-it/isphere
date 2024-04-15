@@ -130,6 +130,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
     private static final String BUTTON_COMPARE_AFTER_SYNC = "BUTTON_COMPARE_AFTER_SYNC"; //$NON-NLS-1$
 
     private static final String MEMBER_FILTER_HISTORY_KEY = "memberFilterHistory"; //$NON-NLS-1$
+    private static final String REGEX_MARKER = "<";
 
     private boolean isLeftObjectValid;
     private boolean isRightObjectValid;
@@ -1245,8 +1246,17 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
         boolean ignoreDate = chkIgnoreDate.getSelection();
         String memberFilter = cboMemberFilter.getText();
 
+        boolean isRegEx;
+        if (memberFilter.startsWith(REGEX_MARKER)) {
+            isRegEx = true;
+            memberFilter = memberFilter.substring(1);
+        } else {
+            isRegEx = false;
+        }
+
         compareOptions.setIgnoreDate(ignoreDate);
         compareOptions.setMemberFilter(memberFilter);
+        compareOptions.setIsRegEx(isRegEx);
 
         labelProvider.setCompareOptions(sharedValues.getCompareOptions());
         tableFilter.setCompareOptions(sharedValues.getCompareOptions());

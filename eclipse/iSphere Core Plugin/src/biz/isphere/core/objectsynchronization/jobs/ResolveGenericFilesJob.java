@@ -12,16 +12,16 @@ import org.eclipse.core.runtime.SubMonitor;
 
 import biz.isphere.core.Messages;
 import biz.isphere.core.objectsynchronization.CompareOptions;
-import biz.isphere.core.objectsynchronization.SYNCMBR_resolveGenericCompareElements;
+import biz.isphere.core.objectsynchronization.SYNCMBR_resolveGenericFiles;
 
 /**
- * This class resolves generic compare elements stored in file SYNCMBRW.
+ * This class resolves generic files stored in file SYNCMBRW.
  * 
  * @see {@link StartCompareMembersJob}
  */
-public class ResolveGenericCompareElementsJob extends AbstractCompareMembersJob {
+public class ResolveGenericFilesJob extends AbstractCompareMembersJob {
 
-    public ResolveGenericCompareElementsJob(SubMonitor monitor, CompareMembersSharedJobValues sharedValues) {
+    public ResolveGenericFilesJob(SubMonitor monitor, CompareMembersSharedJobValues sharedValues) {
         super(monitor, sharedValues);
     }
 
@@ -40,11 +40,11 @@ public class ResolveGenericCompareElementsJob extends AbstractCompareMembersJob 
             CompareOptions compareOptions = getSharedValues().getCompareOptions();
 
             consume(subMonitor, Messages.Task_Resolving_generic_items);
-            resolveGenericCompareElements(subMonitor, sharedValues.getLeftHandle(), sharedValues.getLeftConnectionName(), SyncMbrMode.LEFT_SYSTEM,
+            resolveGenericFiles(subMonitor, sharedValues.getLeftHandle(), sharedValues.getLeftConnectionName(), SyncMbrMode.LEFT_SYSTEM,
                 compareOptions.getMemberFilter());
 
             consume(subMonitor, Messages.Task_Resolving_generic_items);
-            resolveGenericCompareElements(subMonitor, sharedValues.getRightHandle(), sharedValues.getRightConnectionName(), SyncMbrMode.RIGHT_SYSTEM,
+            resolveGenericFiles(subMonitor, sharedValues.getRightHandle(), sharedValues.getRightConnectionName(), SyncMbrMode.RIGHT_SYSTEM,
                 compareOptions.getMemberFilter());
 
         } finally {
@@ -52,7 +52,7 @@ public class ResolveGenericCompareElementsJob extends AbstractCompareMembersJob 
         }
     }
 
-    private void resolveGenericCompareElements(SubMonitor subMonitor, int handle, String connectionName, SyncMbrMode mode, String memberFilter) {
+    private void resolveGenericFiles(SubMonitor subMonitor, int handle, String connectionName, SyncMbrMode mode, String memberFilter) {
 
         if (!initialize(connectionName)) {
             return;
@@ -72,7 +72,7 @@ public class ResolveGenericCompareElementsJob extends AbstractCompareMembersJob 
                 return;
             }
 
-            new SYNCMBR_resolveGenericCompareElements().run(getSystem(), handle, mode.mode(), memberFilter);
+            new SYNCMBR_resolveGenericFiles().run(getSystem(), handle, mode.mode(), memberFilter);
 
         } finally {
             restoreCurrentLibrary();

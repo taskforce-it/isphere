@@ -28,32 +28,34 @@
 //        >>EXECUTE<<
 //    >>END-PRE-COMPILER<<
 // ------------------------------------------------------------------------------------------
-ctl-opt bnddir('ISPHERE') main(W005005);
+ctl-opt bnddir('ISPHERE') main(W005008);
 // ------------------------------------------------------------------------------------------
 
 // Other External Prototypes
 /include qcpysrc,syncmbr
 
 // Own Prototype
-dcl-pr W005005 extpgm('W005005');
+dcl-pr W005008 extpgm('W005008');
   i_handle       zoned(10: 0) const;
   i_mode         char(10) const;
   i_memberFilter char(1024) const;
+  i_isRegEx      ind const;
 end-pr;
 
 // ------------------------------------------------------------------------------------------
 
-dcl-proc W005005;
+dcl-proc W005008;
   dcl-pi *n;
     i_handle       zoned(10: 0) const;
     i_mode         char(10) const;
     i_memberFilter char(1024) const;
+    i_isRegEx      ind const;
   end-pi;
 
   // ----------------------------------------------------------------------------------------
 
   // Call service program
-  SYNCMBR_resolveGenericCompareElements(i_handle: i_mode: i_memberFilter);
+  SYNCMBR_resolveGenericMembers(i_handle: i_mode: i_memberFilter: i_isRegEx);
 
 end-proc;
 

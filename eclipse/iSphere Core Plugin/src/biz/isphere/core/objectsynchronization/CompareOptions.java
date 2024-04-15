@@ -19,6 +19,7 @@ public class CompareOptions implements Serializable {
 
     private boolean isIgnoreDate;
     private String memberFilter;
+    private boolean isRegEx;
 
     public CompareOptions() {
         this(false, "*"); //$NON-NLS-1$
@@ -43,5 +44,13 @@ public class CompareOptions implements Serializable {
 
     public void setMemberFilter(String memberFilter) {
         this.memberFilter = memberFilter;
+    }
+
+    public void setIsRegEx(boolean isRegEx) {
+        this.isRegEx = isRegEx;
+    }
+
+    public boolean isRegEx() {
+        return isRegEx;
     }
 }
