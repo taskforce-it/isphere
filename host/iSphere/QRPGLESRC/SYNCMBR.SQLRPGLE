@@ -33,8 +33,8 @@
 //          >>PARM<<  DBGVIEW(*NONE);
 //          >>PARM<<  RPGPPOPT(*LVL2);
 //          >>PARM<<  OPTION(*EVENTF);
-//          --PARM<<  COMPILEOPT('OPTIMIZE(*FULL)');
-//          >>PARM<<  COMPILEOPT('OPTIMIZE(*NONE) DBGVIEW(*LIST)');
+//          >>PARM<<  COMPILEOPT('OPTIMIZE(*FULL)');
+//          --PARM<<  COMPILEOPT('OPTIMIZE(*NONE) DBGVIEW(*LIST)');
 //        >>END-COMPILE<<
 //        >>EXECUTE<<
 //    >>END-PRE-COMPILER<<
