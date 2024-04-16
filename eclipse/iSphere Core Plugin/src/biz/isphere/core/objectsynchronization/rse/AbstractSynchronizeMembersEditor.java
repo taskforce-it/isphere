@@ -813,7 +813,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
 
         if (tableViewer != null) {
 
-            long startTime = System.currentTimeMillis();
+            // long startTime = System.currentTimeMillis();
 
             Object input = null;
 
@@ -862,7 +862,8 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
                 }
                 tableViewer.getControl().setRedraw(true);
 
-                System.out.println("Time in msecs: " + (System.currentTimeMillis() - startTime));
+                // System.out.println("Time in msecs: " +
+                // (System.currentTimeMillis() - startTime));
             }
         }
     }

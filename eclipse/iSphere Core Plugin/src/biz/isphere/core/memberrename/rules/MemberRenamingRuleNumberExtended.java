@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Owners
+ * Copyright (c) 2012-2024 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -118,7 +118,6 @@ public class MemberRenamingRuleNumberExtended extends MemberRenamingRuleNumber {
                             nextMemberName = shortenName(getSystem(), getBaseMemberLibrary(), getBaseMemberFile(), baseMemberName);
                         } else {
                             // keep the member name unchanged
-                            System.out.println("keep the member name unchanged");
                         }
                     }
                 } catch (Exception e) {

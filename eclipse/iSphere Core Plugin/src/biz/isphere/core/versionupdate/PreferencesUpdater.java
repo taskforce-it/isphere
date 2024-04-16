@@ -131,7 +131,6 @@ public final class PreferencesUpdater implements IObsoleteBundles, IObsoletePref
         if (hasBundle(BIZ_ISPHERE_COMPAREFILTER)) {
             if (!performUpdate_v5210) {
                 performUpdate_v5210 = true;
-                System.out.println("Scheduling job.");
                 new UIJob("") {
                     @Override
                     public IStatus runInUIThread(IProgressMonitor monitor) {
