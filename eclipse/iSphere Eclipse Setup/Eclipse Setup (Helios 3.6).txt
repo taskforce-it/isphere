@@ -221,6 +221,14 @@ a) Preferences -> General -> Workspace
 Useful LPEX Editor Settings (no more required for RDi 9.6+):
 ------------------------------------------------------------
 
+a) Preferences -> Remote Systems -> Remote Systems LPEX Editor
+
+    Resequence start at:                100
+    Resequence increment by:            100
+    Resequence lines at save:           [x]
+    Lock remote members on startup:     [x]
+    Set insert a preferred editor mode: [x]
+
 a) Map the [Enter] key to "splittLine":
      - From the RDp toolbar select Window > Preferences
      - Expand LPEX Editor

@@ -50,12 +50,11 @@ ctl-opt NoMain;
 /include QCPYSRC,SYNCMBR     // Procedure prototypes for modul 'SYNCMBR'
 /include QCPYSRC,NBRRNG      // Procedure prototypes for modul 'NBRRNG'
 /include QCPYSRC,CRC32       // Procedure prototypes for modul 'CRC32'
-/include QCPYSRC,QUSCRTUS    // Procedure prototype for procedure 'QUSRMBRD'
+/include QCPYSRC,QUSCRTUS    // Procedure prototype for procedure 'QUSCRTUS'
 /include QCPYSRC,QUSDLTUS    // Procedure prototype for procedure 'QUSDLTUS'
 /include QCPYSRC,QUSPTRUS    // Procedure prototype for procedure 'QUSPTRUS'
 /include QCPYSRC,QUSRMBRD    // Procedure prototype for procedure 'QUSRMBRD'
 /include QCPYSRC,QUSLMBR     // Procedure prototype for procedure 'QUSLMBR'
-/include QCPYSRC,QUSRMBRD    // Procedure prototype for procedure 'QUSRMBRD'
 /include QCPYSRC,GHDR0300    // Data structure for format 'GHDR0300' for generic header
 /include QCPYSRC,MBRL0320    // Data structure for format 'MBRL0320' for procedure 'QUSLMBR'
 /include QCPYSRC,MBRD0200    // Data structure for format 'MBRD0200' for procedure 'QUSRMBRD'

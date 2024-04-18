@@ -852,8 +852,6 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
                     tableViewer.addFilter(tableFilter);
                 }
 
-                setButtonEnablementAndDisplayCompareStatus();
-
                 storeScreenValues();
 
             } finally {
@@ -861,6 +859,8 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
                     tableViewer.setInput(input);
                 }
                 tableViewer.getControl().setRedraw(true);
+
+                setButtonEnablementAndDisplayCompareStatus();
 
                 // System.out.println("Time in msecs: " +
                 // (System.currentTimeMillis() - startTime));
