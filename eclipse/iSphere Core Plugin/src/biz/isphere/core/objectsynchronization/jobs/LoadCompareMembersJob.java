@@ -209,8 +209,26 @@ public class LoadCompareMembersJob extends AbstractCompareMembersJob {
 
     private int getNumMembers(String connectionName, int handle, SyncMbrMode mode) {
 
-        AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
-        int numMembers = new SYNCMBR_getNumberOfCompareElements().run(system, handle, mode.mode());
+        int numMembers = 0;
+
+        try {
+
+            if (!initialize(connectionName)) {
+                ISpherePlugin.logError("*** LoadCompareMemebersJob.getNumMembers(): Could not initialize job ***", null);
+                return 0;
+            }
+
+            if (!setCurrentLibrary()) {
+                ISpherePlugin.logError("*** LoadCompareMemebersJob.getNumMembers(): Could not set current library ***", null);
+                return 0;
+            }
+
+            AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
+            numMembers = new SYNCMBR_getNumberOfCompareElements().run(system, handle, mode.mode());
+
+        } finally {
+            restoreCurrentLibrary();
+        }
 
         return numMembers;
     }
