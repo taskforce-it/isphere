@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -1141,7 +1142,6 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
                 editorCloseListener.addMember(editorPart, new WatchedMember(memberDescription, parent));
             }
         }
-
     }
 
     private void performDisplayMember(MemberDescription memberDescription) {
@@ -1153,7 +1153,11 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
 
         IEditor editor = ISpherePlugin.getEditor();
         if (editor != null) {
-            editor.openEditor(connectionName, libraryName, fileName, memberName, IEditor.DISPLAY);
+            editor.openEditor(connectionName, libraryName, fileName, memberName, IEditor.EDIT);
+            IEditorPart editorPart = editor.findEditorPart(connectionName, libraryName, fileName, memberName);
+            if (editorPart != null) {
+                editorCloseListener.addMember(editorPart, new WatchedMember(memberDescription, null));
+            }
         }
     }
 
@@ -1587,18 +1591,38 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
 
             IWorkbenchPart closedPart = partRef.getPart(false);
             if (closedPart == owner) {
+                for (Entry<IEditorPart, WatchedMember> entry : members.entrySet()) {
+                    updateWatchedMember(entry.getKey(), entry.getValue());
+                    closeEditor(entry.getKey());
+                }
                 unregisterEditorListener(this);
             } else {
                 if (closedPart instanceof IEditorPart) {
                     IEditorPart closedEditorPart = (IEditorPart)closedPart;
                     WatchedMember watchedMember = members.get(closedEditorPart);
-                    if (watchedMember != null) {
-                        MemberDescription memberDescription = watchedMember.getMemberDescription();
-                        MemberCompareItem memberCompareItem = watchedMember.getParent();
-                        performUpdateMemberDescription(memberDescription, memberCompareItem);
-                        removeMember(closedEditorPart);
-                    }
+                    updateWatchedMember(closedEditorPart, watchedMember);
                 }
+            }
+        }
+
+        private void closeEditor(IEditorPart editorPart) {
+            boolean doSave = false;
+            String name = editorPart.getEditorInput().getName();
+            if (editorPart.isDirty()) {
+                doSave = MessageDialog.openConfirm(getShell(), Messages.Title_Save_Resource, Messages.bind(Messages.Save_A, name));
+            }
+            editorPart.getEditorSite().getPage().closeEditor(editorPart, doSave);
+            return;
+        }
+
+        private void updateWatchedMember(IEditorPart closedEditorPart, WatchedMember watchedMember) {
+            if (watchedMember != null) {
+                MemberDescription memberDescription = watchedMember.getMemberDescription();
+                MemberCompareItem memberCompareItem = watchedMember.getParent();
+                if (memberCompareItem != null) {
+                    performUpdateMemberDescription(memberDescription, memberCompareItem);
+                }
+                removeMember(closedEditorPart);
             }
         }
 

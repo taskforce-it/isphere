@@ -1824,6 +1824,10 @@ public class Messages extends NLS {
 
     public static String Right_source_file_or_library_is_missing;
 
+    public static String Title_Save_Resource;
+
+    public static String Save_A;
+
     public static String No_items_selected_for_processing;
 
     public static String Tooltip_start_compare_source_members;
