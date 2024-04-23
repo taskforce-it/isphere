@@ -1,6 +1,14 @@
 
-Changelog: iSphere 6.0.0.b001
------------------------------
+Changelog: iSphere 6.0.3.r
+--------------------------
+ • Added options for specifying how to open editors (viewing and
+   editing source members) from the iSphere Synchronize Members
+   editor.
+ • Changed to close open member editors when closing the iSphere
+   Synchronize Members editor.
+
+Changelog: iSphere 6.0.2.r
+--------------------------
  • Added iSphere Synchronize Members editor for synchronizing source
    members between two source files or all source files of two
    libraries.
