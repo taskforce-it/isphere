@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -38,6 +37,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -102,6 +102,7 @@ import biz.isphere.core.objectsynchronization.jobs.ICancelableJob;
 import biz.isphere.core.objectsynchronization.jobs.ICompareMembersPostrun;
 import biz.isphere.core.objectsynchronization.jobs.ISynchronizeMembersPostRun;
 import biz.isphere.core.objectsynchronization.jobs.SyncMbrMode;
+import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.sourcemembercopy.CopyMemberItem;
 import biz.isphere.core.sourcemembercopy.ICopyItemMessageListener;
 import biz.isphere.core.sourcemembercopy.IValidateItemMessageListener;
@@ -132,6 +133,9 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
 
     private static final String MEMBER_FILTER_HISTORY_KEY = "memberFilterHistory"; //$NON-NLS-1$
     private static final String REGEX_MARKER = "<";
+
+    private static final int LEFT = 1;
+    private static final int RIGHT = 2;
 
     private boolean isLeftObjectValid;
     private boolean isRightObjectValid;
@@ -516,6 +520,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
         btnCancel.setText(Messages.Cancel);
         btnCancel.setToolTipText(Messages.Tooltip_cancel_operation);
         btnCancel.addSelectionListener(new SelectionListener() {
+
             public void widgetSelected(SelectionEvent event) {
                 performCancelOperation();
             }
@@ -1127,7 +1132,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
         setButtonEnablementAndDisplayCompareStatus();
     }
 
-    private void performEditMember(MemberDescription memberDescription, MemberCompareItem parent) {
+    private void performEditMember(MemberDescription memberDescription, MemberCompareItem parent, Rectangle editorBounds) {
 
         String connectionName = memberDescription.getConnectionName();
         String libraryName = memberDescription.getLibraryName();
@@ -1140,11 +1145,14 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
             IEditorPart editorPart = editor.findEditorPart(connectionName, libraryName, fileName, memberName);
             if (editorPart != null) {
                 editorCloseListener.addMember(editorPart, new WatchedMember(memberDescription, parent));
+                if (Preferences.getInstance().isSyncMembersEditorDetached()) {
+                    UIHelper.detachEditor(editorPart, editorBounds);
+                }
             }
         }
     }
 
-    private void performDisplayMember(MemberDescription memberDescription) {
+    private void performDisplayMember(MemberDescription memberDescription, Rectangle editorBounds) {
 
         String connectionName = memberDescription.getConnectionName();
         String libraryName = memberDescription.getLibraryName();
@@ -1157,8 +1165,124 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
             IEditorPart editorPart = editor.findEditorPart(connectionName, libraryName, fileName, memberName);
             if (editorPart != null) {
                 editorCloseListener.addMember(editorPart, new WatchedMember(memberDescription, null));
+                if (Preferences.getInstance().isSyncMembersEditorDetached()) {
+                    UIHelper.detachEditor(editorPart, editorBounds);
+                }
             }
         }
+    }
+
+    private Rectangle getEditorBounds(Shell shell, int side) {
+
+        Rectangle drawingArea;
+
+        boolean centerOnScreen = Preferences.getInstance().isSyncMembersCenterOnScreen();
+        boolean sideBySide = Preferences.getInstance().isSyncMembersSideBySide();
+
+        Rectangle monitorArea = shell.getMonitor().getClientArea();
+
+        if (centerOnScreen || shell.getMaximized()) {
+            drawingArea = shell.getMonitor().getClientArea();
+        } else {
+            drawingArea = shell.getBounds();
+        }
+
+        Rectangle editorBounds = getEditorBoundsInternal(side, monitorArea, drawingArea, sideBySide);
+
+        // Check left and right edges
+        int diffX = 0;
+        if (side == LEFT) {
+            Rectangle leftEditorBounds = editorBounds;
+            Rectangle rightEditorBounds = getEditorBoundsInternal(RIGHT, monitorArea, drawingArea, sideBySide);
+            if (leftEditorBounds.x < monitorArea.x) {
+                diffX = leftEditorBounds.x - monitorArea.x;
+            } else if (rightEditorBounds.x + leftEditorBounds.width > monitorArea.width + monitorArea.x) {
+                diffX = (rightEditorBounds.x + leftEditorBounds.width) - (monitorArea.width + monitorArea.x);
+            }
+        } else {
+            Rectangle leftEditorBounds = getEditorBoundsInternal(LEFT, monitorArea, drawingArea, sideBySide);
+            Rectangle rightEditorBounds = editorBounds;
+            if (rightEditorBounds.x + rightEditorBounds.width > monitorArea.width + monitorArea.x) {
+                diffX = (rightEditorBounds.x + rightEditorBounds.width) - (monitorArea.width + monitorArea.x);
+            } else if (leftEditorBounds.x < monitorArea.x) {
+                diffX = leftEditorBounds.x - monitorArea.x;
+            }
+        }
+
+        editorBounds.x = editorBounds.x - diffX;
+
+        return editorBounds;
+    }
+
+    private Rectangle getEditorBoundsInternal(int side, Rectangle monitorArea, Rectangle drawingArea, boolean sideBySide) {
+
+        int editorHeight;
+        int editorWidth;
+        int editorPosX;
+        int editorPosY;
+
+        // Set preferred editor dimensions
+        final int maxHeight = (int)Math.abs(drawingArea.height * .8);
+        final int maxWidth = (int)Math.abs(drawingArea.width * .8);
+
+        editorHeight = 900;
+        if (editorHeight > maxHeight) {
+            debug("Max. height exceeded: " + editorHeight);
+            editorHeight = maxHeight;
+        }
+        editorWidth = 800;
+        if (editorWidth > maxWidth) {
+            debug("Max. width exceeded: " + editorWidth);
+            editorWidth = maxWidth;
+        }
+
+        int minHeight = 450;
+        if (editorHeight < minHeight) {
+            debug("Min. height succeeded: " + editorHeight);
+            editorHeight = minHeight;
+        }
+        int minWidth = 600;
+        if (editorWidth < minWidth) {
+            debug("Min. width succeeded: " + editorWidth);
+            editorWidth = minWidth;
+        }
+
+        // Ensure editor fits on screen
+        final int maxMonitorHeight = (int)Math.abs(monitorArea.height * .9);
+        final int maxMonitorWidth = (int)Math.abs(monitorArea.width * .9);
+
+        if (sideBySide) {
+            if (editorWidth * 2 > maxMonitorWidth) {
+                editorWidth = (int)Math.abs(maxMonitorWidth / 2);
+            }
+        } else {
+            if (editorWidth > maxMonitorWidth) {
+                editorWidth = maxMonitorWidth;
+            }
+        }
+
+        if (editorHeight > maxMonitorHeight) {
+            editorHeight = (int)Math.abs(maxMonitorHeight * .9);
+        }
+
+        // Position editor on screen
+        if (sideBySide) {
+            if (side == LEFT) {
+                editorPosX = Math.abs(drawingArea.width / 2) - Math.abs(editorWidth / 1);
+            } else {
+                editorPosX = Math.abs(drawingArea.width / 2);
+            }
+        } else {
+            editorPosX = Math.abs(drawingArea.width / 2) - Math.abs(editorWidth / 2);
+        }
+
+        editorPosY = Math.abs(drawingArea.height / 2) - Math.abs(editorHeight / 2);
+
+        // Add monitor offset
+        editorPosX = editorPosX + drawingArea.x;
+        editorPosY = editorPosY + drawingArea.y;
+
+        return new Rectangle(editorPosX, editorPosY, editorWidth, editorHeight);
     }
 
     private boolean performDeleteMember(MemberDescription memberDescription) {
@@ -1591,31 +1715,25 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
 
             IWorkbenchPart closedPart = partRef.getPart(false);
             if (closedPart == owner) {
-                for (Entry<IEditorPart, WatchedMember> entry : members.entrySet()) {
-                    updateWatchedMember(entry.getKey(), entry.getValue());
-                    closeEditor(entry.getKey());
-                }
                 unregisterEditorListener(this);
+                for (Object entry : members.keySet().toArray()) {
+                    IEditorPart editorPart = (IEditorPart)entry;
+                    closeEditor(editorPart);
+                }
             } else {
                 if (closedPart instanceof IEditorPart) {
                     IEditorPart closedEditorPart = (IEditorPart)closedPart;
                     WatchedMember watchedMember = members.get(closedEditorPart);
-                    updateWatchedMember(closedEditorPart, watchedMember);
+                    updateAndRemoveWatchedMember(closedEditorPart, watchedMember);
                 }
             }
         }
 
         private void closeEditor(IEditorPart editorPart) {
-            boolean doSave = false;
-            String name = editorPart.getEditorInput().getName();
-            if (editorPart.isDirty()) {
-                doSave = MessageDialog.openConfirm(getShell(), Messages.Title_Save_Resource, Messages.bind(Messages.Save_A, name));
-            }
-            editorPart.getEditorSite().getPage().closeEditor(editorPart, doSave);
-            return;
+            editorPart.getEditorSite().getPage().closeEditor(editorPart, true);
         }
 
-        private void updateWatchedMember(IEditorPart closedEditorPart, WatchedMember watchedMember) {
+        private void updateAndRemoveWatchedMember(IEditorPart closedEditorPart, WatchedMember watchedMember) {
             if (watchedMember != null) {
                 MemberDescription memberDescription = watchedMember.getMemberDescription();
                 MemberCompareItem memberCompareItem = watchedMember.getParent();
@@ -1794,9 +1912,6 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
      * Class that implements the context menu for the table rows.
      */
     private class TableContextMenu extends MenuAdapter {
-
-        private static final int LEFT = 1;
-        private static final int RIGHT = 2;
 
         private Menu parent;
         private ISynchronizeMembersEditorConfiguration configuration;
@@ -2028,19 +2143,21 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
             MemberCompareItem[] selectedItems = getSelectedItems();
             for (MemberCompareItem selectedItem : selectedItems) {
 
+                Rectangle editorBounds = getEditorBounds(getShell(), side);
+
                 if (side == LEFT) {
                     if (isEditable) {
                         MemberDescription leftMemberDescription = selectedItem.getLeftMemberDescription();
-                        AbstractSynchronizeMembersEditor.this.performEditMember(leftMemberDescription, selectedItem);
+                        AbstractSynchronizeMembersEditor.this.performEditMember(leftMemberDescription, selectedItem, editorBounds);
                     } else {
-                        AbstractSynchronizeMembersEditor.this.performDisplayMember(selectedItem.getLeftMemberDescription());
+                        AbstractSynchronizeMembersEditor.this.performDisplayMember(selectedItem.getLeftMemberDescription(), editorBounds);
                     }
                 } else if (side == RIGHT) {
                     if (isEditable) {
                         MemberDescription rightMemberDescription = selectedItem.getRightMemberDescription();
-                        AbstractSynchronizeMembersEditor.this.performEditMember(rightMemberDescription, selectedItem);
+                        AbstractSynchronizeMembersEditor.this.performEditMember(rightMemberDescription, selectedItem, editorBounds);
                     } else {
-                        AbstractSynchronizeMembersEditor.this.performDisplayMember(selectedItem.getRightMemberDescription());
+                        AbstractSynchronizeMembersEditor.this.performDisplayMember(selectedItem.getRightMemberDescription(), editorBounds);
                     }
                 }
             }

@@ -1824,10 +1824,6 @@ public class Messages extends NLS {
 
     public static String Right_source_file_or_library_is_missing;
 
-    public static String Title_Save_Resource;
-
-    public static String Save_A;
-
     public static String No_items_selected_for_processing;
 
     public static String Tooltip_start_compare_source_members;
@@ -1863,6 +1859,20 @@ public class Messages extends NLS {
     public static String Other;
 
     public static String Invalid_selection_Objects_must_be_of_the_same_type;
+
+    public static String Editors;
+
+    public static String Detach_editors_colon;
+
+    public static String Tooltip_Specifies_whether_to_use_detached_editors_for_editing_and_viewing_members;
+
+    public static String Center_on_screen_colon;
+
+    public static String Tooltip_Specifies_whether_to_center_the_editor_on_the_screen_or_application;
+
+    public static String Side_by_side_colon;
+
+    public static String Tooltip_Specifies_whether_to_place_the_left_and_the_right_editors_side_by_side;
 
     /*
      * Warning messages

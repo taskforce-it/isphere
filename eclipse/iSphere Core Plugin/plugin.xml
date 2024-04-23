@@ -207,7 +207,12 @@
             category="biz.isphere.base.preferencepages.General"
             name="%Copy_Members"
             id="biz.isphere.core.preferencepages.ISphereCopyMembers"/>
-    	
+      <page
+            class="biz.isphere.core.preferencepages.ISphereSynchronizeMembers"
+            category="biz.isphere.base.preferencepages.General"
+            name="%Synchronize_Members"
+            id="biz.isphere.core.preferencepages.ISphereSynchronizeMembers"/>
+
    </extension>
    
    <extension

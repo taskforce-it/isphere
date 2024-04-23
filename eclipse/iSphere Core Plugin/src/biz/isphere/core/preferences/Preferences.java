@@ -204,6 +204,11 @@ public final class Preferences {
     public static final String COMPARE_FILTER_FILE_EXTENSIONS = DOMAIN + "fileextensions"; //$NON-NLS-1$
     public static final String COMPARE_FILTER_IMPORT_EXPORT_LOCATION = DOMAIN + "importexportlocation"; //$NON-NLS-1$
 
+    private static final String SYNC_MEMBERS = DOMAIN + "SYNC_MEMBERS."; //$NON-NLS-1$
+    private static final String SYNC_MEMBERS_EDITOR_DETACHED = SYNC_MEMBERS + "EDITOR_DETACHED"; //$NON-NLS-1$
+    private static final String SYNC_MEMBERS_EDITOR_CENTER_ON_SCREEN = SYNC_MEMBERS + "EDITOR_CENTER_ON_SCREEN"; //$NON-NLS-1$
+    private static final String SYNC_MEMBERS_EDITOR_SIDE_BY_SIDE = SYNC_MEMBERS + "EDITOR_SIDE_BY_SIDE"; //$NON-NLS-1$
+
     /**
      * Private constructor to ensure the Singleton pattern.
      */
@@ -765,6 +770,18 @@ public final class Preferences {
         return preferenceStore.getString(COMPARE_FILTER_IMPORT_EXPORT_LOCATION);
     }
 
+    public boolean isSyncMembersEditorDetached() {
+        return preferenceStore.getBoolean(SYNC_MEMBERS_EDITOR_DETACHED);
+    }
+
+    public boolean isSyncMembersCenterOnScreen() {
+        return preferenceStore.getBoolean(SYNC_MEMBERS_EDITOR_CENTER_ON_SCREEN);
+    }
+
+    public boolean isSyncMembersSideBySide() {
+        return preferenceStore.getBoolean(SYNC_MEMBERS_EDITOR_SIDE_BY_SIDE);
+    }
+
     /*
      * Preferences: SETTER
      */
@@ -1065,6 +1082,18 @@ public final class Preferences {
         saveImportExportLocation(aLocation);
     }
 
+    public void setSyncMembersEditorDetached(boolean enabled) {
+        preferenceStore.setValue(SYNC_MEMBERS_EDITOR_DETACHED, enabled);
+    }
+
+    public void setSyncMembersCenterOnScreen(boolean enabled) {
+        preferenceStore.setValue(SYNC_MEMBERS_EDITOR_CENTER_ON_SCREEN, enabled);
+    }
+
+    public void setSyncMembersSideBySide(boolean enabled) {
+        preferenceStore.setValue(SYNC_MEMBERS_EDITOR_SIDE_BY_SIDE, enabled);
+    }
+
     /*
      * Preferences: Default Initializer
      */
@@ -1179,6 +1208,10 @@ public final class Preferences {
 
         preferenceStore.setDefault(COMPARE_FILTER_FILE_EXTENSIONS, getDefaultFileExtensionsAsString());
         preferenceStore.setDefault(COMPARE_FILTER_IMPORT_EXPORT_LOCATION, getDefaultImportExportLocation());
+
+        preferenceStore.setDefault(SYNC_MEMBERS_EDITOR_DETACHED, getDefaultSyncMembersEditorDetached());
+        preferenceStore.setDefault(SYNC_MEMBERS_EDITOR_CENTER_ON_SCREEN, getDefaultSyncMembersCenterOnScreen());
+        preferenceStore.setDefault(SYNC_MEMBERS_EDITOR_SIDE_BY_SIDE, getDefaultSyncMembersEditorSideBySide());
     }
 
     /*
@@ -1845,6 +1878,18 @@ public final class Preferences {
 
     public String getDefaultImportExportLocation() {
         return "";
+    }
+
+    public boolean getDefaultSyncMembersEditorDetached() {
+        return true;
+    }
+
+    public boolean getDefaultSyncMembersCenterOnScreen() {
+        return true;
+    }
+
+    public boolean getDefaultSyncMembersEditorSideBySide() {
+        return true;
     }
 
     /*

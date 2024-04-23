@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2022 iSphere Project Team
+ * Copyright (c) 2012-2024 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,10 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.css.swt.theme.ITheme;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
@@ -99,4 +103,21 @@ public final class UIHelper {
 
         return shell;
     }
+
+    public static void detachEditor(IEditorPart editorPart, Rectangle editorBounds) {
+        detachEditor(editorPart, editorBounds.x, editorBounds.y, editorBounds.width, editorBounds.height);
+    }
+
+    public static void detachEditor(IEditorPart editorPart, int posX, int posY, int width, int height) {
+
+        EModelService modelService = (EModelService)editorPart.getSite().getService(EModelService.class);
+        MPartSashContainerElement modelPart = (MPart)editorPart.getSite().getService(MPart.class);
+
+        if (modelPart.getCurSharedRef() != null) {
+            modelPart = modelPart.getCurSharedRef();
+        }
+
+        modelService.detach(modelPart, posX, posY, width, height);
+    }
+
 }
