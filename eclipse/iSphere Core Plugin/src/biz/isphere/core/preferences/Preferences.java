@@ -371,24 +371,6 @@ public final class Preferences {
         return preferenceStore.getBoolean(BACKUP_MEMBER_NAME_ENABLE_MEMBER_PRECHECK);
     }
 
-    // public int getSourceFileSearchMemberColumnWidth() {
-    // return preferenceStore.getInt(SOURCE_FILE_SEARCH_MEMBER_COLUMN_WIDTH);
-    // }
-
-    // public int getSourceFileSearchSrcTypeColumnWidth() {
-    // return preferenceStore.getInt(SOURCE_FILE_SEARCH_SRC_TYPE_COLUMN_WIDTH);
-    // }
-
-    // public int getSourceFileSearchLastChangedDateColumnWidth() {
-    // return
-    // preferenceStore.getInt(SOURCE_FILE_SEARCH_LAST_CHANGED_DATE_COLUMN_WIDTH);
-    // }
-
-    // public int getSourceFileSearchStatementsCountColumnWidth() {
-    // return
-    // preferenceStore.getInt(SOURCE_FILE_SEARCH_STATEMENTS_COUNT_COLUMN_WIDTH);
-    // }
-
     public String getSpooledFileConversionText() {
         return preferenceStore.getString(SPOOLED_FILES_CONVERSION_TEXT);
     }
@@ -883,25 +865,6 @@ public final class Preferences {
         preferenceStore.setValue(BACKUP_MEMBER_NAME_ENABLE_MEMBER_PRECHECK, enabled);
     }
 
-    // public void setSourceFileSearchMemberColumnWidth(int width) {
-    // preferenceStore.setValue(SOURCE_FILE_SEARCH_MEMBER_COLUMN_WIDTH, width);
-    // }
-
-    // public void setSourceFileSearchSrcTypeColumnWidth(int width) {
-    // preferenceStore.setValue(SOURCE_FILE_SEARCH_SRC_TYPE_COLUMN_WIDTH,
-    // width);
-    // }
-
-    // public void setSourceFileSearchLastChangedDateColumnWidth(int width) {
-    // preferenceStore.setValue(SOURCE_FILE_SEARCH_LAST_CHANGED_DATE_COLUMN_WIDTH,
-    // width);
-    // }
-
-    // public void setSourceFileSearchStatementsCountColumnWidth(int width) {
-    // preferenceStore.setValue(SOURCE_FILE_SEARCH_STATEMENTS_COUNT_COLUMN_WIDTH,
-    // width);
-    // }
-
     public void setSpooledFileConversionText(String aConversionType) {
         preferenceStore.setValue(SPOOLED_FILES_CONVERSION_TEXT, aConversionType);
     }
@@ -1148,15 +1111,6 @@ public final class Preferences {
 
         preferenceStore.setDefault(SPOOLED_FILES_PAGE_SIZE, getDefaultSpooledFilePageSize());
         preferenceStore.setDefault(SPOOLED_FILES_ADJUST_FONT_SIZE, getDefaultSpooledFileAdjustFontSize());
-
-        // preferenceStore.setDefault(SOURCE_FILE_SEARCH_MEMBER_COLUMN_WIDTH,
-        // getDefaultSourceFileSearchMemberColumnWidth());
-        // preferenceStore.setDefault(SOURCE_FILE_SEARCH_SRC_TYPE_COLUMN_WIDTH,
-        // getDefaultSourceFileSearchSrcTypeColumnWidth());
-        // preferenceStore.setDefault(SOURCE_FILE_SEARCH_LAST_CHANGED_DATE_COLUMN_WIDTH,
-        // getDefaultSourceFileSearchLastChangedDateColumnWidth());
-        // preferenceStore.setDefault(SOURCE_FILE_SEARCH_STATEMENTS_COUNT_COLUMN_WIDTH,
-        // getDefaultSourceFileSearchStatementsCountColumnWidth());
 
         preferenceStore.setDefault(MONITOR_DTAQ_LENGTH, getDefaultDataQueueMaximumMessageLength());
         preferenceStore.setDefault(MONITOR_DTAQ_VIEW_IN_HEX, getDefaultDataQueueViewInHex());
