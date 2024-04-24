@@ -79,6 +79,7 @@ import biz.isphere.core.externalapi.ISynchronizeMembersEditorConfiguration;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.ibmi.contributions.extension.point.BasicQualifiedConnectionName;
 import biz.isphere.core.internal.IEditor;
+import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.Member;
 import biz.isphere.core.internal.MessageDialogAsync;
@@ -269,29 +270,32 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
         btnSelectLeftObject = WidgetFactory.createPushButton(leftHeaderArea);
         btnSelectLeftObject.setToolTipText(Messages.Tooltip_Select_object);
         btnSelectLeftObject.setImage(getImage(ISpherePlugin.IMAGE_OPEN));
-        btnSelectLeftObject.addSelectionListener(new SelectionListener() {
+        btnSelectLeftObject.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent arg0) {
                 String connectionName = null;
                 String libraryName = null;
-                String objectName = null;
+                String fileName = null;
                 String objectType = null;
-                if (getEditorInput().getLeftObject() != null) {
-                    connectionName = getEditorInput().getLeftObject().getConnectionName();
-                    libraryName = getEditorInput().getLeftObject().getLibrary();
-                    objectName = getEditorInput().getLeftObject().getName();
-                    objectType = getEditorInput().getLeftObject().getObjectType();
+                RemoteObject defaultValues = getEditorInput().getLeftObject();
+                if (defaultValues == null) {
+                    defaultValues = getEditorInput().getRightObject();
                 }
-                RemoteObject object = performSelectRemoteObject(connectionName, libraryName, objectName, objectType);
-                if (object != null) {
+                if (defaultValues != null) {
+                    connectionName = defaultValues.getConnectionName();
+                    libraryName = defaultValues.getLibrary();
+                    fileName = defaultValues.getName();
+                    objectType = defaultValues.getObjectType();
+                } else {
+                    objectType = ISeries.LIB;
+                }
+                RemoteObject sourceFile = performSelectRemoteObject(connectionName, libraryName, fileName, objectType);
+                if (sourceFile != null) {
                     isLeftObjectValid = false;
-                    getEditorInput().setLeftObject(object);
-                    refreshAndCheckObjectNames();
+                    getEditorInput().setLeftObject(sourceFile);
+                    refreshAndCheckObjectNames(); // sets: isLeftObjectValid
                 } else {
                     setButtonEnablementAndDisplayCompareStatus();
                 }
-            }
-
-            public void widgetDefaultSelected(SelectionEvent arg0) {
             }
         });
 
@@ -321,29 +325,32 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
         btnSelectRightObject = WidgetFactory.createPushButton(rightHeaderArea);
         btnSelectRightObject.setToolTipText(Messages.Tooltip_Select_object);
         btnSelectRightObject.setImage(getImage(ISpherePlugin.IMAGE_OPEN));
-        btnSelectRightObject.addSelectionListener(new SelectionListener() {
+        btnSelectRightObject.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent arg0) {
                 String connectionName = null;
                 String libraryName = null;
                 String fileName = null;
                 String objectType = null;
-                if (getEditorInput().getRightObject() != null) {
-                    connectionName = getEditorInput().getRightObject().getConnectionName();
-                    libraryName = getEditorInput().getRightObject().getLibrary();
-                    fileName = getEditorInput().getRightObject().getName();
-                    objectType = getEditorInput().getRightObject().getObjectType();
+                RemoteObject defaultValues = getEditorInput().getRightObject();
+                if (defaultValues == null) {
+                    defaultValues = getEditorInput().getLeftObject();
+                }
+                if (defaultValues != null) {
+                    connectionName = defaultValues.getConnectionName();
+                    libraryName = defaultValues.getLibrary();
+                    fileName = defaultValues.getName();
+                    objectType = defaultValues.getObjectType();
+                } else {
+                    objectType = ISeries.LIB;
                 }
                 RemoteObject sourceFile = performSelectRemoteObject(connectionName, libraryName, fileName, objectType);
                 if (sourceFile != null) {
                     isRightObjectValid = false;
                     getEditorInput().setRightObject(sourceFile);
-                    refreshAndCheckObjectNames();
+                    refreshAndCheckObjectNames(); // sets: isRightObjectValid
                 } else {
                     setButtonEnablementAndDisplayCompareStatus();
                 }
-            }
-
-            public void widgetDefaultSelected(SelectionEvent arg0) {
             }
         });
     }

@@ -6,8 +6,10 @@ Changelog: iSphere 6.0.3.r
    editor.
  • Changed to close open member editors when closing the iSphere
    Synchronize Members editor.
- • Ignore files EVFTEMPF01 and EVFTEMPF02 in iSphere Synchronize
-   Members editor.
+ • Changed to ignore files EVFTEMPF01 and EVFTEMPF02 in iSphere
+   Synchronize Members editor.
+ • Fixed setting default values when selecting the left or right
+   object in the iSphere Synchronize Members editor.
 
 Changelog: iSphere 6.0.2.r
 --------------------------
