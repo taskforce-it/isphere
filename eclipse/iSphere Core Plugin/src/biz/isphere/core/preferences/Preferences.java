@@ -208,6 +208,7 @@ public final class Preferences {
     private static final String SYNC_MEMBERS_EDITOR_DETACHED = SYNC_MEMBERS + "EDITOR_DETACHED"; //$NON-NLS-1$
     private static final String SYNC_MEMBERS_EDITOR_CENTER_ON_SCREEN = SYNC_MEMBERS + "EDITOR_CENTER_ON_SCREEN"; //$NON-NLS-1$
     private static final String SYNC_MEMBERS_EDITOR_SIDE_BY_SIDE = SYNC_MEMBERS + "EDITOR_SIDE_BY_SIDE"; //$NON-NLS-1$
+    public static final String SYNC_MEMBERS_FILES_EXCLUDED = SYNC_MEMBERS + "FILES_EXCLUDED"; //$NON-NLS-1$
 
     /**
      * Private constructor to ensure the Singleton pattern.
@@ -782,6 +783,10 @@ public final class Preferences {
         return preferenceStore.getBoolean(SYNC_MEMBERS_EDITOR_SIDE_BY_SIDE);
     }
 
+    public String[] getSyncMembersFilesExcluded() {
+        return getFilesExcluded();
+    }
+
     /*
      * Preferences: SETTER
      */
@@ -1094,6 +1099,10 @@ public final class Preferences {
         preferenceStore.setValue(SYNC_MEMBERS_EDITOR_SIDE_BY_SIDE, enabled);
     }
 
+    public void setSyncMembersFilesExcluded(String[] filesExcluded) {
+        saveFilesExcluded(filesExcluded);
+    }
+
     /*
      * Preferences: Default Initializer
      */
@@ -1212,6 +1221,7 @@ public final class Preferences {
         preferenceStore.setDefault(SYNC_MEMBERS_EDITOR_DETACHED, getDefaultSyncMembersEditorDetached());
         preferenceStore.setDefault(SYNC_MEMBERS_EDITOR_CENTER_ON_SCREEN, getDefaultSyncMembersCenterOnScreen());
         preferenceStore.setDefault(SYNC_MEMBERS_EDITOR_SIDE_BY_SIDE, getDefaultSyncMembersEditorSideBySide());
+        preferenceStore.setDefault(SYNC_MEMBERS_FILES_EXCLUDED, getDefaultSyncMembersFilesExcluded());
     }
 
     /*
@@ -1893,11 +1903,20 @@ public final class Preferences {
     }
 
     /*
+     * See:
+     * https://www.ibm.com/support/pages/why-are-source-files-evftempf01-and-
+     * evftempf02-created
+     */
+    public String getDefaultSyncMembersFilesExcluded() {
+        return "EVFEVENT,EVFTEMPF01,EVFTEMPF02".replaceAll(",", TOKEN_SEPARATOR); //$NON-NLS-1$
+    }
+
+    /*
      * Preferences: Save Values
      */
 
     private void saveFileExtensions(String[] anExtensions) {
-        preferenceStore.setValue(COMPARE_FILTER_FILE_EXTENSIONS, StringHelper.concatTokens(anExtensions, TOKEN_SEPARATOR));
+        saveStringArray(COMPARE_FILTER_FILE_EXTENSIONS, anExtensions);
         fileExtensionsSet = null;
     }
 
@@ -1915,7 +1934,23 @@ public final class Preferences {
     }
 
     private String[] getFileExtensions(boolean anUpperCase) {
-        String tList = preferenceStore.getString(COMPARE_FILTER_FILE_EXTENSIONS);
+        return loadStringArray(COMPARE_FILTER_FILE_EXTENSIONS, anUpperCase);
+    }
+
+    private void saveFilesExcluded(String[] aFilesExcludedList) {
+        saveStringArray(SYNC_MEMBERS_FILES_EXCLUDED, aFilesExcludedList);
+    }
+
+    private String[] getFilesExcluded() {
+        return loadStringArray(SYNC_MEMBERS_FILES_EXCLUDED, true);
+    }
+
+    private void saveStringArray(String aKey, String[] aStringArray) {
+        preferenceStore.setValue(aKey, StringHelper.concatTokens(aStringArray, TOKEN_SEPARATOR));
+    }
+
+    private String[] loadStringArray(String aKey, boolean anUpperCase) {
+        String tList = preferenceStore.getString(aKey);
         if (anUpperCase) {
             return StringHelper.getTokens(tList.toUpperCase(), TOKEN_SEPARATOR);
         } else {

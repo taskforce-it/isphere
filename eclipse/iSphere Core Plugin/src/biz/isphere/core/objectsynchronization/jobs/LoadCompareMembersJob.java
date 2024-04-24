@@ -14,6 +14,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.core.runtime.SubMonitor;
 
@@ -25,6 +28,7 @@ import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.objectsynchronization.MemberDescription;
 import biz.isphere.core.objectsynchronization.SYNCMBR_getNumberOfCompareElements;
+import biz.isphere.core.preferences.Preferences;
 
 /**
  * This class loads the members that are compared from file SYNCMBRW.
@@ -153,6 +157,8 @@ public class LoadCompareMembersJob extends AbstractCompareMembersJob {
             long checksum;
             String text;
 
+            Set<String> excludedFiles = new HashSet<String>(Arrays.asList(Preferences.getInstance().getSyncMembersFilesExcluded()));
+
             while (resultSet.next()) {
 
                 if (subMonitor.isCanceled()) {
@@ -170,17 +176,22 @@ public class LoadCompareMembersJob extends AbstractCompareMembersJob {
                 checksum = resultSet.getLong(CHECKSUM);
                 text = resultSet.getString(TEXT);
 
-                MemberDescription memberDescription = new MemberDescription();
-                memberDescription.setConnectionName(connectionName);
-                memberDescription.setLibraryName(library);
-                memberDescription.setFileName(file);
-                memberDescription.setMemberName(member);
-                memberDescription.setSourceType(srcType);
-                memberDescription.setLastChangedDate(lastChanged);
-                memberDescription.setChecksum(checksum);
-                memberDescription.setText(text);
+                if (!excludedFiles.contains(file)) {
 
-                arrayListSearchResults.add(memberDescription);
+                    MemberDescription memberDescription = new MemberDescription();
+                    memberDescription.setConnectionName(connectionName);
+                    memberDescription.setLibraryName(library);
+                    memberDescription.setFileName(file);
+                    memberDescription.setMemberName(member);
+                    memberDescription.setSourceType(srcType);
+                    memberDescription.setLastChangedDate(lastChanged);
+                    memberDescription.setChecksum(checksum);
+                    memberDescription.setText(text);
+
+                    arrayListSearchResults.add(memberDescription);
+                } else {
+                    debug("Member not loaded, because file is excluded: " + file);
+                }
 
             }
 
@@ -233,4 +244,7 @@ public class LoadCompareMembersJob extends AbstractCompareMembersJob {
         return numMembers;
     }
 
+    private void debug(String message) {
+        System.out.println(message);
+    }
 }
