@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
-Bundle-Version: 6.0.2.r
+Bundle-Version: 6.0.3.r
 X-Bundle-Update-Library: true
 X-Bundle-Update-Library-Info: .
-X-Bundle-Info: New iSphere Synchronize Members editor.\nAdded menu option 'search' to iSphere source and stream file search result views.\nEnhancements and bugfixes of the Journal Explorer.\nMinor other bugfixes.\niSphere moved to GitHub.
-X-Beta-Version: 6.0.2.r
+X-Bundle-Info: Added options for specfifying how to open editors (viewing and editing source members) from the Synchronize Members editor.\nChanged the Synchronize Members editor to ignore EVFTEMPF01 and EVFTEMPF02.\nMinor bug fixes.
+X-Beta-Version: 6.0.3.r
 X-Beta-Update-Library: true
 X-Beta-Update-Library-Info: .
-X-Beta-Info: New iSphere Synchronize Members editor.\nAdded menu option 'search' to iSphere source and stream file search result views.\nEnhancements and bugfixes of the Journal Explorer.\nMinor other bugfixes.\niSphere moved to GitHub. 
+X-Beta-Info: Added options for specfifying how to open editors (viewing and editing source members) from the Synchronize Members editor.\nChanged the Synchronize Members editor to ignore EVFTEMPF01 and EVFTEMPF02.\nMinor bug fixes.
