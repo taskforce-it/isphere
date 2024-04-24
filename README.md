@@ -35,6 +35,7 @@ Please refer to the [iSphere Version History](<https://rdi-open-source.github.io
 * Job Log Explorer
 * Journal Explorer
 * Job Trace Explorer
+* Comparing & Synchronizing Source Members
 
 ## Credits
 
