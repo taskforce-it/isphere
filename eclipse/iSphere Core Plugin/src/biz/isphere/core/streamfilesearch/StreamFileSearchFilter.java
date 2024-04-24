@@ -63,6 +63,9 @@ public class StreamFileSearchFilter {
     private boolean isTypeSelected(SearchElement item) {
 
         String type = searchOptions.getGenericStringOption(GenericSearchOption.STMF_TYPE, "*"); //$NON-NLS-1$
+        if (type.startsWith("*.")) {
+            type = type.substring(2);
+        }
 
         if ("*".equals(type)) {
             return true;

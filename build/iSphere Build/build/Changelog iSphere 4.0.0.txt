@@ -1,4 +1,9 @@
 
+Changelog: iSphere 6.0.4.r
+--------------------------
+ • Fixed iSphere Source File Search to correctly filter stream
+   files by type.
+
 Changelog: iSphere 6.0.3.r
 --------------------------
  • Added options for specifying how to open editors (viewing and
