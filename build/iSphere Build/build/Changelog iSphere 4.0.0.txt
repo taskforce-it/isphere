@@ -1,8 +1,10 @@
 
 Changelog: iSphere 6.0.4.r
 --------------------------
- • Fixed iSphere Source File Search to correctly filter stream
+ • Fixed 'iSphere Source File Search' to correctly filter stream
    files by type.
+ • Fixed 'Copy Members To' to correctly set the "to" connection
+   name.
 
 Changelog: iSphere 6.0.3.r
 --------------------------

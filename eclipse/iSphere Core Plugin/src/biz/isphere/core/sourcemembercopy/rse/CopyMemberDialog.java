@@ -191,10 +191,10 @@ public class CopyMemberDialog extends XDialog implements IValidateItemMessageLis
 
         tableViewer.setSelection(null);
 
-        String qualifiedConnectionName = comboToConnection.getQualifiedConnectionName();
+        String qualifiedConnectionName = getToConnectionName();
         String connectionNameUI = comboToConnection.getText();
-        String libraryName = textToLibrary.getText();
-        String fileName = comboToFile.getText();
+        String libraryName = getToLibraryName();
+        String fileName = getToFileName();
         int ccsid = copyMemberService.getToConnectionCcsid();
 
         if (!isConnectionValid(qualifiedConnectionName, connectionNameUI)) {
@@ -211,6 +211,7 @@ public class CopyMemberDialog extends XDialog implements IValidateItemMessageLis
 
         boolean isRenameMemberCheck = Preferences.getInstance().isMemberRenamingPrecheck();
 
+        copyMemberService.setToConnection(getToConnectionName());
         copyMemberService.setExistingMemberAction(getExistingMemberAction());
         copyMemberService.setMissingFileAction(MissingFileAction.ERROR);
         copyMemberService.setIgnoreDataLostError(chkBoxIgnoreDataLostError.getSelection());
@@ -564,12 +565,12 @@ public class CopyMemberDialog extends XDialog implements IValidateItemMessageLis
 
         if (!comboToConnection.hasConnection()) {
             comboToConnection.setFocus();
-        } else if (StringHelper.isNullOrEmpty(comboToFile.getText())) {
+        } else if (StringHelper.isNullOrEmpty(getToFileName())) {
             comboToFile.setFocus();
-        } else if (StringHelper.isNullOrEmpty(textToLibrary.getText())) {
+        } else if (StringHelper.isNullOrEmpty(getToLibraryName())) {
             textToLibrary.setFocus();
         } else {
-            if (FROMFILE.equals(comboToFile.getText())) {
+            if (FROMFILE.equals(getToFileName())) {
                 comboToFile.setFocus();
             } else {
                 comboToConnection.setFocus();
