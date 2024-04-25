@@ -2,7 +2,7 @@
 <feature
       id="biz.isphere.comparefilters"
       label="iSphere Compare Filters for RDi 9.5+ (obsolete)"
-      version="6.0.3.r"
+      version="6.0.4.r"
       provider-name="iSphere Project Team"
       plugin="biz.isphere.core">
 
@@ -23,7 +23,7 @@ this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
    </license>
 
    <requires>
-      <import feature="biz.isphere.core" version="6.0.3.r" match="perfect"/>
+      <import feature="biz.isphere.core" version="6.0.4.r" match="perfect"/>
    </requires>
 
    <plugin
