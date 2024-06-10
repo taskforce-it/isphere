@@ -276,6 +276,10 @@ public class CopyMemberDialog extends XDialog implements IValidateItemMessageLis
 
     private boolean isFileValid(String qualifiedConnectionName, String libraryName, String fileName, int ccsid) {
 
+        if (CopyMemberDialog.FROMFILE.equals(fileName)) {
+            return true;
+        }
+
         Validator nameValidator = Validator.getNameInstance(ccsid);
         if (!nameValidator.validate(fileName)) {
             String message = Messages.bind(Messages.Invalid_file_name, libraryName);

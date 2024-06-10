@@ -1,4 +1,9 @@
 
+Changelog: iSphere 6.0.5.r
+--------------------------
+ • Fixed problem that special value *FROMFILE is not accepted in
+   'Copy Members to' dialog.
+
 Changelog: iSphere 6.0.4.r
 --------------------------
  • Fixed 'iSphere Source File Search' to correctly filter stream
