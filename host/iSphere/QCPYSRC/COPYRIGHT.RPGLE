@@ -6,7 +6,7 @@
      D                 c                   '6.0.5'
      D ISPHERE_MIN_CLIENT_VERSION...
      D                 c                   '3.7.0'
-      *  1234567890
+      *
      D ISPHERE_DATE...
      D                 c                   'xxxx-xx-xx'
       /endif
