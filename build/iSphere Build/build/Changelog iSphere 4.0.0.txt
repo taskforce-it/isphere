@@ -1,4 +1,10 @@
 
+Changelog: iSphere 6.0.6.r
+--------------------------
+ • Fixed problem that the list of journaled objects was empty in
+   the SQL editor of the iSphere Journal Explorer, making it hard
+   to specify a SQL WHERE clause
+
 Changelog: iSphere 6.0.5.r
 --------------------------
  • Fixed problem that special value *FROMFILE is not accepted in
