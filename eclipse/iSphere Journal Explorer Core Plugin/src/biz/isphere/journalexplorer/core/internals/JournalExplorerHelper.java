@@ -12,9 +12,11 @@ import biz.isphere.core.internal.ISeries;
 
 public final class JournalExplorerHelper {
 
+    private static final String QDDS = "*QDDS";
+
     public static boolean isValidObjectType(String objectType) {
 
-        if (ISeries.FILE.equals(objectType) || ISeries.DTAARA.equals(objectType) || ISeries.DTAQ.equals(objectType)) {
+        if (ISeries.FILE.equals(objectType) || ISeries.DTAARA.equals(objectType) || ISeries.DTAQ.equals(objectType) || QDDS.equals(objectType)) {
             return true;
         }
 
