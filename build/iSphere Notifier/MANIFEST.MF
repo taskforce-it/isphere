@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
-Bundle-Version: 6.0.5.r
-X-Bundle-Update-Library: true
+Bundle-Version: 6.0.6.r
+X-Bundle-Update-Library: false
 X-Bundle-Update-Library-Info: .
-X-Bundle-Info: Fixed problem that special value *FROMFILE is not accepted in 'Copy Members to' dialog.
-X-Beta-Version: 6.0.5.r
-X-Beta-Update-Library: true
+X-Bundle-Info: Fixed problem that the list of journaled objects was empty in the SQL editor of the journal explorer.
+X-Beta-Version: 6.0.6.r
+X-Beta-Update-Library: false
 X-Beta-Update-Library-Info: .
-X-Beta-Info: Fixed problem that special value *FROMFILE is not accepted in 'Copy Members to' dialog.
+X-Beta-Info: Fixed problem that the list of journaled objects was empty in the SQL editor of the journal explorer.
