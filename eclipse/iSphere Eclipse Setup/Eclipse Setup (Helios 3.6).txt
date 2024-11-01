@@ -47,8 +47,8 @@ from:
    Eclipse Marketplace
 <OBSOLETE>
 		
-Repository Location:
---------------------
+Project Locations:
+------------------
 
    https://github.com/rdi-open-source/isphere/
    https://github.com/rdi-open-source/rapid-fire/
@@ -56,6 +56,12 @@ Repository Location:
 
    Authorization: ECDSA ssh key
 
+Cloning Repositories:
+---------------------
+
+   git clone git@github.com:rdi-open-source/isphere.git    --config core.sshCommand="ssh -i c:/Users/thomas/.ssh/id_ecdsa_rdi_github"
+   git clone git@github.com:rdi-open-source/rapid-fire.git --config core.sshCommand="ssh -i c:/Users/thomas/.ssh/id_ecdsa_rdi_github"
+   git clone git@github.com:tools-400/irpgunit.git         --config core.sshCommand="ssh -i c:/Users/thomas/.ssh/id_ecdsa_rdi_github"
 
 Required Plug-ins:
 ------------------
