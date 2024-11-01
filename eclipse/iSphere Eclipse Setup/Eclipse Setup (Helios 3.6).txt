@@ -50,11 +50,11 @@ from:
 Repository Location:
 --------------------
 
-   https://svn.code.sf.net/p/irpgunit/code
-   https://svn.code.sf.net/p/isphere/code
-   https://svn.code.sf.net/p/rapid-fire/code
+   https://github.com/rdi-open-source/isphere/
+   https://github.com/rdi-open-source/rapid-fire/
+   https://github.com/tools-400/irpgunit/
 
-   Password: Your SourceForge password.
+   Authorization: ECDSA ssh key
 
 
 Required Plug-ins:
@@ -284,3 +284,18 @@ General - Appearance - Colors and Fonts (filter for: active part background):
   View and Editor Folders
     Active part background begin: R=255, G=128, B=128
     Active part background end  : R=255, G=0, B=0
+
+
+Plug-in Installation Sequence
+=============================
+
+Subclipse 4.3.4 (Eclipse Marketplace)
+eGit 6.5 (local)
+ - Git integration  for Eclipse
+ - Java implementation of Git
+Enhanced Class Decompiler (local)
+iSphere (Eclipse Marketplace)
+Rapid Fire (Eclipse Marketplace)
+CMOne (local)
+ - CMOne NG for RDi 9.5.1.3+
+iRPGUnit + iRPGUnit for CMOne NG (Eclipse Marketplace)
