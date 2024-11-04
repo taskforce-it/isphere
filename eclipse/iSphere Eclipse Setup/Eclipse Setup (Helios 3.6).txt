@@ -275,6 +275,10 @@ RDi 9.6:
 Name:     Enhanced Class Decompiler
 Location: Enhanced Class Decompiler Project Update - https://ecd-plugin.github.io/update/
 
+After installing the decompiler plug-in, change the '*.class without source'
+file association to use the Class Decompiler Viewer as the default viewer.
+Preferences -> File Associations -> '*.class without source' -> Associated editors
+
 Autodetect Encoding Eclipse Plugin:
 
 Name:     Autodetect Encoding
