@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import biz.isphere.core.Messages;
+import biz.isphere.core.preferences.Preferences;
 
 @SuppressWarnings("serial")
 public class SearchOptions implements Serializable {
@@ -66,6 +67,12 @@ public class SearchOptions implements Serializable {
         searchArguments = null;
     }
 
+    public static SearchOptions streamFileSearchOption() {
+        SearchOptions searchOptions = new SearchOptions();
+        searchOptions.setGenericOption(GenericSearchOption.MAX_DEPTH, Preferences.getInstance().getStreamFileSearchMaxDepth());
+        return searchOptions;
+    }
+
     public boolean isShowAllItems() {
         return showAllItems;
     }
@@ -98,6 +105,10 @@ public class SearchOptions implements Serializable {
     }
 
     public void setGenericOption(GenericSearchOption.Key anOption, String aValue) {
+        getOrCreateGenericOptions().put(anOption, new GenericSearchOption(anOption, aValue));
+    }
+
+    public void setGenericOption(GenericSearchOption.Key anOption, Integer aValue) {
         getOrCreateGenericOptions().put(anOption, new GenericSearchOption(anOption, aValue));
     }
 
@@ -147,6 +158,16 @@ public class SearchOptions implements Serializable {
         if (hasGenericOption(key)) {
             GenericSearchOption genericSearchOption = getOrCreateGenericOptions().get(key);
             return (String)genericSearchOption.getValue();
+        }
+
+        return defaultValue;
+    }
+
+    public int getGenericIntOption(GenericSearchOption.Key key, int defaultValue) {
+
+        if (hasGenericOption(key)) {
+            GenericSearchOption genericSearchOption = getOrCreateGenericOptions().get(key);
+            return (Integer)genericSearchOption.getValue();
         }
 
         return defaultValue;

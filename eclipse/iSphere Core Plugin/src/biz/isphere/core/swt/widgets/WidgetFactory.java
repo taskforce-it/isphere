@@ -191,7 +191,7 @@ public final class WidgetFactory {
      * @return text field
      */
     public static Text createText(Composite parent) {
-        return WidgetFactory.getInstance().produceText(parent, SWT.NONE, true);
+        return WidgetFactory.getInstance().produceText(parent, SWT.BORDER, true);
     }
 
     /**
@@ -521,6 +521,35 @@ public final class WidgetFactory {
         combo.addVerifyListener(new NumericOnlyVerifyListener(true, false));
 
         return combo;
+    }
+
+    /**
+     * Produces an integer combo box with a border. Only the character 0-9 are
+     * allowed to be entered. Only positive values can be entered.
+     * 
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
+     * @return integer combo box
+     */
+    public static Combo createIntegerCombo(Composite parent) {
+        return createIntegerCombo(parent, false);
+    }
+
+    /**
+     * Produces an integer combo box with a border. Only the character 0-9 are
+     * allowed to be entered.
+     * 
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
+     * @param hasSign - specifies whether to enable the signs '+' and '-'.
+     * @return integer combo box
+     */
+    public static Combo createIntegerCombo(Composite parent, boolean hasSign) {
+
+        Combo text = WidgetFactory.createCombo(parent);
+        text.addVerifyListener(new NumericOnlyVerifyListener(false, hasSign));
+
+        return text;
     }
 
     /**

@@ -22,8 +22,8 @@ import com.ibm.etools.iseries.subsystems.ifs.files.IFSFileFilterString;
 import com.ibm.etools.iseries.subsystems.ifs.files.IFSRemoteFile;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
+import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.streamfilesearch.SearchElement;
-import biz.isphere.core.streamfilesearch.StreamFileSearchFilter;
 
 /**
  * This class produces a list of {@link SearchElement} elements from a mixed
@@ -32,26 +32,21 @@ import biz.isphere.core.streamfilesearch.StreamFileSearchFilter;
  */
 public class StreamFileSearchFilterResolver {
 
-    public static final int MAX_DEPTH = 1;
-
     private Shell _shell;
     private IBMiConnection _connection;
-    private StreamFileSearchFilter streamFileSearchFilter;
 
     private Map<String, SearchElement> _searchElements;
     private IFSFileFilterString _ifsFileFilterString;
     private StreamFileSearchDelegate _delegate;
     private IProgressMonitor monitor;
 
-    public StreamFileSearchFilterResolver(Shell shell, IBMiConnection connection, StreamFileSearchFilter streamFileSearchFilter) {
-        this(shell, connection, streamFileSearchFilter, null);
+    public StreamFileSearchFilterResolver(Shell shell, IBMiConnection connection) {
+        this(shell, connection, null);
     }
 
-    private StreamFileSearchFilterResolver(Shell shell, IBMiConnection connection, StreamFileSearchFilter streamFileSearchFilter,
-        IProgressMonitor monitor) {
+    public StreamFileSearchFilterResolver(Shell shell, IBMiConnection connection, IProgressMonitor monitor) {
         this._shell = shell;
         this._connection = connection;
-        this.streamFileSearchFilter = streamFileSearchFilter;
         this.monitor = monitor;
     }
 
@@ -130,7 +125,8 @@ public class StreamFileSearchFilterResolver {
 
     private void addElementsFromFilterString(String... filterStrings) throws InterruptedException, Exception {
 
-        getStreamFileSearchDelegate().addElementsFromFilterString(_searchElements, streamFileSearchFilter, MAX_DEPTH, filterStrings);
+        getStreamFileSearchDelegate().addElementsFromFilterString(_searchElements, Preferences.getInstance().getStreamFileSearchMaxDepth(),
+            filterStrings);
     }
 
     private IFSFileFilterString getStreamFilterString() {

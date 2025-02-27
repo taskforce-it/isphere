@@ -217,22 +217,21 @@ public abstract class AbstractSearchPage extends XDialogPage implements ISearchP
 
     protected void createOptionsGroup(Composite parent) {
 
+        int numColumns = 3;
+
         Group tOptionsGroup = createGroup(parent, Messages.Options);
-        GridLayout tOptionsGroupLayout = new GridLayout(2, false);
+        GridLayout tOptionsGroupLayout = new GridLayout(numColumns, false);
         tOptionsGroupLayout.marginWidth = 5;
         tOptionsGroupLayout.marginHeight = 5;
         tOptionsGroup.setLayout(tOptionsGroupLayout);
-        GridData tGridData = new GridData(GridData.FILL_VERTICAL);
-        tGridData.horizontalAlignment = GridData.FILL;
-        tGridData.grabExcessHorizontalSpace = true;
-        tGridData.widthHint = 250;
+        GridData tGridData = new GridData(GridData.FILL_BOTH);
         tGridData.horizontalSpan = 2;
         tOptionsGroup.setLayoutData(tGridData);
 
-        createOptionItems(tOptionsGroup);
+        createOptionItems(tOptionsGroup, numColumns);
     }
 
-    protected abstract void createOptionItems(Group parent);
+    protected abstract void createOptionItems(Group parent, int numColumns);
 
     protected void createSearchStringEditorGroup(Composite aMainPanel) {
 

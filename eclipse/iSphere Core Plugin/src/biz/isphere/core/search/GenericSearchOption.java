@@ -21,9 +21,10 @@ public class GenericSearchOption implements Map.Entry<String, Object> {
     public static final GenericSearchOption.Key MSGF_INCLUDE_MESSAGE_ID = GenericSearchOption.Key.MSGF_INCLUDE_MESSAGE_ID;
     public static final GenericSearchOption.Key MSGF_INCLUDE_SECOND_LEVEL_TEXT = GenericSearchOption.Key.MSGF_INCLUDE_SECOND_LEVEL_TEXT;
     public static final GenericSearchOption.Key MSGF_INCLUDE_FIRST_LEVEL_TEXT = GenericSearchOption.Key.MSGF_INCLUDE_FIRST_LEVEL_TEXT;
-    
+
     // Stream file search options
     public static final GenericSearchOption.Key STMF_TYPE = GenericSearchOption.Key.STMF_TYPE;
+    public static final GenericSearchOption.Key MAX_DEPTH = GenericSearchOption.Key.MAX_DEPTH;
 
     private GenericSearchOption.Key key;
     private Object value;
@@ -49,6 +50,8 @@ public class GenericSearchOption implements Map.Entry<String, Object> {
             return Messages.GenericSearchOption_SrcMbr_SourceType;
         } else if (GenericSearchOption.STMF_TYPE.equals(key)) {
             return Messages.GenericSearchOption_StmF_Type;
+        } else if (GenericSearchOption.MAX_DEPTH.equals(key)) {
+            return Messages.GenericSearchOption_Max_Depth;
         } else {
             return "*ERROR"; //$NON-NLS-1$
         }
@@ -64,6 +67,8 @@ public class GenericSearchOption implements Map.Entry<String, Object> {
             return ((Boolean)value).toString();
         } else if (value instanceof String) {
             return (String)value;
+        } else if (value instanceof Integer) {
+            return Integer.toString((Integer)value);
         } else {
             return "*ERROR"; //$NON-NLS-1$
         }
@@ -76,7 +81,7 @@ public class GenericSearchOption implements Map.Entry<String, Object> {
     }
 
     public String toText() {
-        return getKeyAsText() + ": " + getValueAsText(); //$NON-NLS-1$        
+        return getKeyAsText() + ": " + getValueAsText(); //$NON-NLS-1$
     }
 
     public enum Key {
@@ -84,7 +89,8 @@ public class GenericSearchOption implements Map.Entry<String, Object> {
         MSGF_INCLUDE_MESSAGE_ID ("INCLUDE_MESSAGE_ID"),
         MSGF_INCLUDE_SECOND_LEVEL_TEXT ("INCLUDE_SECOND_LEVEL_TEXT"),
         MSGF_INCLUDE_FIRST_LEVEL_TEXT ("INCLUDE_FIRST_LEVEL_TEXT"),
-        STMF_TYPE ("STMF_TYPE");
+        STMF_TYPE ("STMF_TYPE"),
+        MAX_DEPTH ("MAX_DEPTH");
 
         private String keyValue;
 

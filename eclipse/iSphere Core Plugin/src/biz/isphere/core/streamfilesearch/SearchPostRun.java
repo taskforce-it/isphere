@@ -8,7 +8,7 @@
 
 package biz.isphere.core.streamfilesearch;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -55,7 +55,7 @@ public class SearchPostRun implements ISearchPostRun {
     private Object _connection;
     private String _connectionName;
     private String _searchString;
-    private HashMap<String, SearchElement> _searchElements;
+    private Map<String, SearchElement> _searchElements;
     private IWorkbenchWindow _workbenchWindow;
 
     public Object getConnection() {
@@ -82,11 +82,11 @@ public class SearchPostRun implements ISearchPostRun {
         this._searchString = _searchString;
     }
 
-    public HashMap<String, SearchElement> getSearchElements() {
+    public Map<String, SearchElement> getSearchElements() {
         return _searchElements;
     }
 
-    public void setSearchElements(HashMap<String, SearchElement> _searchElements) {
+    public void setSearchElements(Map<String, SearchElement> _searchElements) {
         this._searchElements = _searchElements;
     }
 

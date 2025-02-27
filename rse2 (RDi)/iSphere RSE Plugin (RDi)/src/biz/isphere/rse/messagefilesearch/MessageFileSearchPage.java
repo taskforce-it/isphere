@@ -94,26 +94,26 @@ public class MessageFileSearchPage extends AbstractSearchPage {
         messageFilePrompt.getObjectPromptLabel().setText(Messages.Message_file);
     }
 
-    protected void createOptionItems(Group parent) {
+    protected void createOptionItems(Group parent, int numColumns) {
 
         includeFirstLevelTextButton = WidgetFactory.createCheckbox(parent);
         includeFirstLevelTextButton.setText(Messages.IncludeFirstLevelText);
         includeFirstLevelTextButton.setToolTipText(Messages.Specify_whether_or_not_to_include_the_first_level_message_text);
-        GridData tGridData = new GridData(SWT.HORIZONTAL, SWT.DEFAULT, false, false, 2, 1);
+        GridData tGridData = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, numColumns, 1);
         tGridData.grabExcessHorizontalSpace = false;
         includeFirstLevelTextButton.setLayoutData(tGridData);
 
         includeSecondLevelTextButton = WidgetFactory.createCheckbox(parent);
         includeSecondLevelTextButton.setText(Messages.IncludeSecondLevelText);
         includeSecondLevelTextButton.setToolTipText(Messages.Specify_whether_or_not_to_include_the_second_level_message_text);
-        tGridData = new GridData(SWT.HORIZONTAL, SWT.DEFAULT, false, false, 2, 1);
+        tGridData = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, numColumns, 1);
         tGridData.grabExcessHorizontalSpace = false;
         includeSecondLevelTextButton.setLayoutData(tGridData);
 
         includeMessageIdButton = WidgetFactory.createCheckbox(parent);
         includeMessageIdButton.setText(Messages.IncludeMessageId);
         includeMessageIdButton.setToolTipText(Messages.Specify_whether_or_not_to_include_the_message_id);
-        tGridData = new GridData(SWT.HORIZONTAL, SWT.DEFAULT, false, false, 1, 1);
+        tGridData = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, numColumns - 1, 1);
         tGridData.grabExcessHorizontalSpace = false;
         includeMessageIdButton.setLayoutData(tGridData);
 

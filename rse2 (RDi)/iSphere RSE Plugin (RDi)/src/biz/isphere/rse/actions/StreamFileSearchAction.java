@@ -41,6 +41,7 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.exception.InvalidFilterException;
+import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.streamfilesearch.SearchDialog;
 import biz.isphere.core.streamfilesearch.SearchElement;
 import biz.isphere.rse.ISphereRSEPlugin;
@@ -102,7 +103,11 @@ public class StreamFileSearchAction implements IObjectActionDelegate {
         Map<String, SearchElement> _searchElements = null;
 
         try {
-            _searchElements = new StreamFileSearchFilterResolver(_shell, _connection, null).resolveRSEFilter(_selectedElements);
+            if (Preferences.getInstance().isStreamFileSearchBatchResolveEnabled()) {
+                _searchElements = null;
+            } else {
+                _searchElements = new StreamFileSearchFilterResolver(_shell, _connection).resolveRSEFilter(_selectedElements);
+            }
         } catch (InterruptedException e) {
             SystemMessageDialog.displayExceptionMessage(_shell, e);
             return;
@@ -133,7 +138,11 @@ public class StreamFileSearchAction implements IObjectActionDelegate {
                 if (dialog.open() == Dialog.OK) {
 
                     RSESearchExec searchExec = new RSESearchExec(_workbenchWindow, _connection);
-                    searchExec.execute(dialog.getSelectedElements(), dialog.getSearchOptions());
+                    if (_searchElements == null) {
+                        searchExec.resolveAndExecute(_selectedElements, dialog.getSearchOptions());
+                    } else {
+                        searchExec.execute(dialog.getSelectedElements(), dialog.getSearchOptions());
+                    }
 
                 }
 

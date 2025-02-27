@@ -108,15 +108,15 @@ public class SourceFileSearchPage extends AbstractSearchPage {
         return endColumnText;
     }
 
-    protected void createOptionItems(Group parent) {
+    protected void createOptionItems(Group parent, int numColumns) {
 
         Label filterSrcTypeLabel = new Label(parent, SWT.NONE);
-        filterSrcTypeLabel.setLayoutData(new GridData());
+        filterSrcTypeLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, 1, 1));
         filterSrcTypeLabel.setText(Messages.Member_type_colon);
         filterSrcTypeLabel.setToolTipText(Messages.Specifies_the_generic_source_type_of_the_members_that_are_included_in_the_search);
 
         filterSrcTypeCombo = WidgetFactory.createCombo(parent);
-        GridData filterSrcTypeGridData = new GridData();
+        GridData filterSrcTypeGridData = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, numColumns - 1, 1);
         filterSrcTypeGridData.widthHint = 100;
         filterSrcTypeCombo.setLayoutData(filterSrcTypeGridData);
         filterSrcTypeCombo.setToolTipText(Messages.Specifies_the_generic_source_type_of_the_members_that_are_included_in_the_search);
@@ -126,7 +126,7 @@ public class SourceFileSearchPage extends AbstractSearchPage {
         showAllRecordsButton = WidgetFactory.createCheckbox(parent);
         showAllRecordsButton.setText(Messages.ShowAllRecords);
         showAllRecordsButton.setToolTipText(Messages.Specify_whether_all_matching_records_are_returned);
-        showAllRecordsButton.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 2, 1));
+        showAllRecordsButton.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, numColumns, 1));
     }
 
     /**

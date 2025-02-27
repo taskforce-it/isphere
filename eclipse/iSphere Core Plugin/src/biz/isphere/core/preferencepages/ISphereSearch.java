@@ -14,6 +14,7 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -31,10 +32,12 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
+import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.internal.ColorHelper;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
@@ -43,16 +46,19 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
     private static final String MODE_VIEW = "*BROWSE"; //$NON-NLS-1$
     private static final String MODE_EDIT = "*EDIT"; //$NON-NLS-1$
 
-    private Button buttonBatchResolveEnabled;
+    private Button buttonSourceFileSearchBatchResolveEnabled;
     private Combo comboSourceFileSearchEditMode;
     private Text textSourceFileSearchSaveDirectory;
     private Button buttonSourceFileSearchAutoSaveEnabled;
     private Text textSourceFileSearchAutoSaveFileName;
 
+    private Button buttonStreamFileSearchBatchResolveEnabled;
     private Combo comboStreamFileSearchEditMode;
     private Text textStreamFileSearchSaveDirectory;
     private Button buttonStreamFileSearchAutoSaveEnabled;
     private Text textStreamFileSearchAutoSaveFileName;
+    private Combo comboMaxDepth;
+    private Label labelMaxDepthWarning;
 
     private Combo comboMessageFileSearchEditMode;
     private Text textMessageFileSearchSaveDirectory;
@@ -138,226 +144,75 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
 
     private void createSectionSourceFileSearch(Composite parent) {
 
-        Group group = new Group(parent, SWT.NONE);
-        group.setLayout(new GridLayout(3, false));
-        group.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        group.setText(Messages.Source_file_search);
+        Group group = createGroup(parent, Messages.Source_file_search);
 
-        Label labelBatchResolveEnabled = new Label(group, SWT.NONE);
-        labelBatchResolveEnabled.setLayoutData(createLabelLayoutData());
-        labelBatchResolveEnabled.setText(Messages.Batch_resolve_enabled_colon);
+        buttonSourceFileSearchBatchResolveEnabled = createBatchResolveEnabledButton(group);
 
-        buttonBatchResolveEnabled = WidgetFactory.createCheckbox(group);
-        buttonBatchResolveEnabled.setToolTipText(Messages.Batch_resolve_enabled_Tooltip);
-        buttonBatchResolveEnabled.setLayoutData(createTextLayoutData(2));
-        buttonBatchResolveEnabled.addSelectionListener(new SelectionListener() {
+        comboSourceFileSearchEditMode = createEditModeCombo(group);
 
-            public void widgetSelected(SelectionEvent event) {
-                checkAllValues();
-                setControlsEnablement();
-            }
-
-            public void widgetDefaultSelected(SelectionEvent arg0) {
-            }
-        });
-
-        Label labelSoureFileSearchEditMode = new Label(group, SWT.NONE);
-        labelSoureFileSearchEditMode.setLayoutData(createLabelLayoutData());
-        labelSoureFileSearchEditMode.setText(Messages.Double_click_mode_colon);
-
-        comboSourceFileSearchEditMode = WidgetFactory.createReadOnlyCombo(group);
-        comboSourceFileSearchEditMode.setToolTipText(Messages.Tooltip_Double_click_mode);
-        comboSourceFileSearchEditMode.setLayoutData(createTextLayoutData(2));
-        comboSourceFileSearchEditMode.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent event) {
-                checkAllValues();
-            }
-        });
-        fillFileSearchEditModeCombo(comboSourceFileSearchEditMode);
-
-        Label labelSoureFileSearchResultsSaveDirectory = new Label(group, SWT.NONE);
-        labelSoureFileSearchResultsSaveDirectory.setLayoutData(createLabelLayoutData());
-        labelSoureFileSearchResultsSaveDirectory.setText(Messages.Save_results_to_colon);
-
-        textSourceFileSearchSaveDirectory = WidgetFactory.createText(group);
-        textSourceFileSearchSaveDirectory.setToolTipText(Messages.Tooltip_Specifies_the_folder_to_save_source_file_search_results_to);
-        GridData sourceFileSearchSaveDirectoryLayoutData = createTextLayoutData();
-        sourceFileSearchSaveDirectoryLayoutData.widthHint = 200;
-        textSourceFileSearchSaveDirectory.setLayoutData(sourceFileSearchSaveDirectoryLayoutData);
-        textSourceFileSearchSaveDirectory.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent arg0) {
-                if (validateSourceFileSearchSaveDirectory()) {
-                    checkAllValues();
-                }
-            }
-        });
-
-        Button buttonSourceFileSearchResultsSaveDirectory = WidgetFactory.createPushButton(group, Messages.Browse + "..."); //$NON-NLS-1$
-        buttonSourceFileSearchResultsSaveDirectory.addSelectionListener(new SelectionListener() {
-
-            public void widgetSelected(SelectionEvent event) {
-
-                DirectoryDialog dialog = new DirectoryDialog(getShell());
-                dialog.setFilterPath(getFilterPath());
-                String directory = dialog.open();
-                if (directory != null) {
-                    textSourceFileSearchSaveDirectory.setText(directory);
-                }
-            }
-
-            public void widgetDefaultSelected(SelectionEvent arg0) {
-            }
-
-            private String getFilterPath() {
-                if (!StringHelper.isNullOrEmpty(textSourceFileSearchSaveDirectory.getText())) {
-                    File directory = new File(textSourceFileSearchSaveDirectory.getText());
-                    if (directory.exists()) {
-                        if (directory.isDirectory()) {
-                            return directory.getAbsolutePath();
-                        } else {
-                            return directory.getParentFile().getAbsolutePath();
-                        }
-                    }
-                }
-                return Preferences.getInstance().getDefaultSourceFileSearchResultsSaveDirectory();
-            }
-        });
-
-        Label labelSourceFileSearchResultsAutoSaveEnabled = new Label(group, SWT.NONE);
-        labelSourceFileSearchResultsAutoSaveEnabled.setLayoutData(createLabelLayoutData());
-        labelSourceFileSearchResultsAutoSaveEnabled.setText(Messages.Auto_save_enabled_colon);
-
-        buttonSourceFileSearchAutoSaveEnabled = WidgetFactory.createCheckbox(group);
-        buttonSourceFileSearchAutoSaveEnabled.setToolTipText(Messages.Auto_save_enabled_Tooltip);
-        buttonSourceFileSearchAutoSaveEnabled.setLayoutData(createTextLayoutData(2));
-        buttonSourceFileSearchAutoSaveEnabled.addSelectionListener(new SelectionListener() {
-
-            public void widgetSelected(SelectionEvent event) {
-                checkAllValues();
-                setControlsEnablement();
-            }
-
-            public void widgetDefaultSelected(SelectionEvent arg0) {
-            }
-        });
-
-        Label labelSourceFileSearchResultsAutoSaveFileName = new Label(group, SWT.NONE);
-        labelSourceFileSearchResultsAutoSaveFileName.setLayoutData(createLabelLayoutData());
-        labelSourceFileSearchResultsAutoSaveFileName.setText(Messages.Auto_save_file_name_colon);
-
-        textSourceFileSearchAutoSaveFileName = WidgetFactory.createText(group);
-        textSourceFileSearchAutoSaveFileName.setToolTipText(Messages.Auto_save_file_name_Tooltip);
-        textSourceFileSearchAutoSaveFileName.setLayoutData(createTextLayoutData(2));
-        textSourceFileSearchAutoSaveFileName.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent arg0) {
-                if (validateSourceFileSearchAutoSaveFileName()) {
-                    checkAllValues();
-                }
-            }
-        });
+        textSourceFileSearchSaveDirectory = createSaveSearchToPathText(group,
+            Messages.Tooltip_Specifies_the_folder_to_save_source_file_search_results_to);
+        createSelectSearchResultSaveDirectoryButton(group, textSourceFileSearchSaveDirectory);
+        buttonSourceFileSearchAutoSaveEnabled = createAutoSaveEnabledCheckbox(group);
+        textSourceFileSearchAutoSaveFileName = createAutoSaveFileNameText(group);
     }
 
     private void createSectionStreamFileSearch(Composite parent) {
 
-        Group group = new Group(parent, SWT.NONE);
-        group.setLayout(new GridLayout(3, false));
-        group.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        group.setText(Messages.Stream_file_search);
+        Group group = createGroup(parent, Messages.Stream_file_search);
 
-        Label labelSoureFileSearchEditMode = new Label(group, SWT.NONE);
-        labelSoureFileSearchEditMode.setLayoutData(createLabelLayoutData());
-        labelSoureFileSearchEditMode.setText(Messages.Double_click_mode_colon);
+        buttonStreamFileSearchBatchResolveEnabled = createBatchResolveEnabledButton(group);
 
-        comboStreamFileSearchEditMode = WidgetFactory.createReadOnlyCombo(group);
-        comboStreamFileSearchEditMode.setToolTipText(Messages.Tooltip_Double_click_mode);
-        comboStreamFileSearchEditMode.setLayoutData(createTextLayoutData(2));
-        comboStreamFileSearchEditMode.addModifyListener(new ModifyListener() {
+        Label labelMaxDepth = new Label(group, SWT.NONE);
+        labelMaxDepth.setLayoutData(createLabelLayoutData());
+        labelMaxDepth.setText(Messages.Max_depth_colon);
+
+        comboMaxDepth = WidgetFactory.createIntegerCombo(group, true);
+        comboMaxDepth.setToolTipText(Messages.Specifies_the_maximum_depth_of_sub_directories_included_in_the_search);
+        comboMaxDepth.setLayoutData(createTextLayoutData(1, 100));
+        comboMaxDepth.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent event) {
                 checkAllValues();
+                updateMaxDepthWarning();
             }
         });
-        fillFileSearchEditModeCombo(comboStreamFileSearchEditMode);
-
-        Label labelSoureFileSearchResultsSaveDirectory = new Label(group, SWT.NONE);
-        labelSoureFileSearchResultsSaveDirectory.setLayoutData(createLabelLayoutData());
-        labelSoureFileSearchResultsSaveDirectory.setText(Messages.Save_results_to_colon);
-
-        textStreamFileSearchSaveDirectory = WidgetFactory.createText(group);
-        textStreamFileSearchSaveDirectory.setToolTipText(Messages.Tooltip_Specifies_the_folder_to_save_source_file_search_results_to);
-        GridData sourceFileSearchSaveDirectoryLayoutData = createTextLayoutData();
-        sourceFileSearchSaveDirectoryLayoutData.widthHint = 200;
-        textStreamFileSearchSaveDirectory.setLayoutData(sourceFileSearchSaveDirectoryLayoutData);
-        textStreamFileSearchSaveDirectory.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent arg0) {
-                if (validateStreamFileSearchSaveDirectory()) {
-                    checkAllValues();
-                }
-            }
-        });
-
-        Button buttonSourceFileSearchResultsSaveDirectory = WidgetFactory.createPushButton(group, Messages.Browse + "..."); //$NON-NLS-1$
-        buttonSourceFileSearchResultsSaveDirectory.addSelectionListener(new SelectionListener() {
-
-            public void widgetSelected(SelectionEvent event) {
-
-                DirectoryDialog dialog = new DirectoryDialog(getShell());
-                dialog.setFilterPath(getFilterPath());
-                String directory = dialog.open();
-                if (directory != null) {
-                    textStreamFileSearchSaveDirectory.setText(directory);
-                }
-            }
-
-            public void widgetDefaultSelected(SelectionEvent arg0) {
-            }
-
-            private String getFilterPath() {
-                if (!StringHelper.isNullOrEmpty(textStreamFileSearchSaveDirectory.getText())) {
-                    File directory = new File(textStreamFileSearchSaveDirectory.getText());
-                    if (directory.exists()) {
-                        if (directory.isDirectory()) {
-                            return directory.getAbsolutePath();
-                        } else {
-                            return directory.getParentFile().getAbsolutePath();
-                        }
-                    }
-                }
-                return Preferences.getInstance().getDefaultSourceFileSearchResultsSaveDirectory();
-            }
-        });
-
-        Label labelSourceFileSearchResultsAutoSaveEnabled = new Label(group, SWT.NONE);
-        labelSourceFileSearchResultsAutoSaveEnabled.setLayoutData(createLabelLayoutData());
-        labelSourceFileSearchResultsAutoSaveEnabled.setText(Messages.Auto_save_enabled_colon);
-
-        buttonStreamFileSearchAutoSaveEnabled = WidgetFactory.createCheckbox(group);
-        buttonStreamFileSearchAutoSaveEnabled.setToolTipText(Messages.Auto_save_enabled_Tooltip);
-        buttonStreamFileSearchAutoSaveEnabled.setLayoutData(createTextLayoutData(2));
-        buttonStreamFileSearchAutoSaveEnabled.addSelectionListener(new SelectionListener() {
-
-            public void widgetSelected(SelectionEvent event) {
+        comboMaxDepth.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetDefaultSelected(SelectionEvent e) {
                 checkAllValues();
-                setControlsEnablement();
+                updateMaxDepthWarning();
             }
 
-            public void widgetDefaultSelected(SelectionEvent arg0) {
-            }
-        });
-
-        Label labelSourceFileSearchResultsAutoSaveFileName = new Label(group, SWT.NONE);
-        labelSourceFileSearchResultsAutoSaveFileName.setLayoutData(createLabelLayoutData());
-        labelSourceFileSearchResultsAutoSaveFileName.setText(Messages.Auto_save_file_name_colon);
-
-        textStreamFileSearchAutoSaveFileName = WidgetFactory.createText(group);
-        textStreamFileSearchAutoSaveFileName.setToolTipText(Messages.Auto_save_file_name_Tooltip);
-        textStreamFileSearchAutoSaveFileName.setLayoutData(createTextLayoutData(2));
-        textStreamFileSearchAutoSaveFileName.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent arg0) {
-                if (validateStreamFileSearchAutoSaveFileName()) {
-                    checkAllValues();
-                }
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                checkAllValues();
+                updateMaxDepthWarning();
             }
         });
+        comboMaxDepth.setItems(new String[] { "1", Preferences.UNLIMITTED });
+
+        labelMaxDepthWarning = new Label(group, SWT.NONE);
+        labelMaxDepthWarning.setLayoutData(createLabelLayoutData(2));
+        labelMaxDepthWarning.setForeground(ColorHelper.getOrange());
+        labelMaxDepthWarning.setText(Messages.Warning_Maximum_depth_set_to_more_than_one_level);
+
+        comboStreamFileSearchEditMode = createEditModeCombo(group);
+
+        textStreamFileSearchSaveDirectory = createSaveSearchToPathText(group,
+            Messages.Tooltip_Specifies_the_folder_to_save_stream_file_search_results_to);
+        createSelectSearchResultSaveDirectoryButton(group, textStreamFileSearchSaveDirectory);
+        buttonStreamFileSearchAutoSaveEnabled = createAutoSaveEnabledCheckbox(group);
+        textStreamFileSearchAutoSaveFileName = createAutoSaveFileNameText(group);
+    }
+
+    private void updateMaxDepthWarning() {
+        if (labelMaxDepthWarning != null) {
+            if (getMaxDepth() != 1) {
+                labelMaxDepthWarning.setVisible(true);
+            } else {
+                labelMaxDepthWarning.setVisible(false);
+            }
+        }
     }
 
     private void createSectionMessageFileSearch(Composite parent) {
@@ -370,81 +225,37 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
             return;
         }
 
+        Group group = createGroup(parent, Messages.Message_file_search);
+
+        comboMessageFileSearchEditMode = createEditModeCombo(group);
+
+        textMessageFileSearchSaveDirectory = createSaveSearchToPathText(group,
+            Messages.Tooltip_Specifies_the_folder_to_save_message_file_search_results_to);
+        createSelectSearchResultSaveDirectoryButton(group, textMessageFileSearchSaveDirectory);
+        buttonMessageFileSearchAutoSaveEnabled = createAutoSaveEnabledCheckbox(group);
+        textMessageFileSearchAutoSaveFileName = createAutoSaveFileNameText(group);
+    }
+
+    private Group createGroup(Composite parent, String text) {
+
         Group group = new Group(parent, SWT.NONE);
-        group.setLayout(new GridLayout(3, false));
+        group.setLayout(new GridLayout(4, false));
         group.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        group.setText(Messages.Message_file_search);
+        group.setText(text);
 
-        Label labelMessageFileSearchEditMode = new Label(group, SWT.NONE);
-        labelMessageFileSearchEditMode.setLayoutData(createLabelLayoutData());
-        labelMessageFileSearchEditMode.setText(Messages.Double_click_mode_colon);
+        return group;
+    }
 
-        comboMessageFileSearchEditMode = WidgetFactory.createReadOnlyCombo(group);
-        comboMessageFileSearchEditMode.setToolTipText(Messages.Tooltip_Double_click_mode);
-        comboMessageFileSearchEditMode.setLayoutData(createTextLayoutData(2));
-        comboMessageFileSearchEditMode.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent event) {
-                checkAllValues();
-            }
-        });
-        fillFileSearchEditModeCombo(comboMessageFileSearchEditMode);
+    private Button createBatchResolveEnabledButton(Group group) {
 
-        Label labelMessageFileSearchResultsSaveDirectory = new Label(group, SWT.NONE);
-        labelMessageFileSearchResultsSaveDirectory.setLayoutData(createLabelLayoutData());
-        labelMessageFileSearchResultsSaveDirectory.setText(Messages.Save_results_to_colon);
+        Label labelBatchResolveEnabled = new Label(group, SWT.NONE);
+        labelBatchResolveEnabled.setLayoutData(createLabelLayoutData());
+        labelBatchResolveEnabled.setText(Messages.Batch_resolve_enabled_colon);
 
-        textMessageFileSearchSaveDirectory = WidgetFactory.createText(group);
-        textMessageFileSearchSaveDirectory.setToolTipText(Messages.Tooltip_Specifies_the_folder_to_save_message_file_search_results_to);
-        GridData messageFileSearchSaveDirectoryLayoutData = createTextLayoutData();
-        messageFileSearchSaveDirectoryLayoutData.widthHint = 200;
-        textMessageFileSearchSaveDirectory.setLayoutData(messageFileSearchSaveDirectoryLayoutData);
-        textMessageFileSearchSaveDirectory.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent arg0) {
-                if (validateMessageFileSearchSaveDirectory()) {
-                    checkAllValues();
-                }
-            }
-        });
-
-        Button buttonMessageFileSearchResultsSaveDirectory = WidgetFactory.createPushButton(group, Messages.Browse + "..."); //$NON-NLS-1$
-        buttonMessageFileSearchResultsSaveDirectory.addSelectionListener(new SelectionListener() {
-
-            public void widgetSelected(SelectionEvent event) {
-
-                DirectoryDialog dialog = new DirectoryDialog(getShell());
-                dialog.setFilterPath(getFilterPath());
-                String directory = dialog.open();
-                if (directory != null) {
-                    textMessageFileSearchSaveDirectory.setText(directory);
-                }
-            }
-
-            public void widgetDefaultSelected(SelectionEvent arg0) {
-            }
-
-            private String getFilterPath() {
-                if (!StringHelper.isNullOrEmpty(textMessageFileSearchSaveDirectory.getText())) {
-                    File directory = new File(textMessageFileSearchSaveDirectory.getText());
-                    if (directory.exists()) {
-                        if (directory.isDirectory()) {
-                            return directory.getAbsolutePath();
-                        } else {
-                            return directory.getParentFile().getAbsolutePath();
-                        }
-                    }
-                }
-                return Preferences.getInstance().getDefaultMessageFileSearchResultsSaveDirectory();
-            }
-        });
-
-        Label labelMessageFileSearchResultsAutoSaveEnabled = new Label(group, SWT.NONE);
-        labelMessageFileSearchResultsAutoSaveEnabled.setLayoutData(createLabelLayoutData());
-        labelMessageFileSearchResultsAutoSaveEnabled.setText(Messages.Auto_save_enabled_colon);
-
-        buttonMessageFileSearchAutoSaveEnabled = WidgetFactory.createCheckbox(group);
-        buttonMessageFileSearchAutoSaveEnabled.setToolTipText(Messages.Auto_save_enabled_Tooltip);
-        buttonMessageFileSearchAutoSaveEnabled.setLayoutData(createTextLayoutData(2));
-        buttonMessageFileSearchAutoSaveEnabled.addSelectionListener(new SelectionListener() {
+        Button button = WidgetFactory.createCheckbox(group);
+        button.setToolTipText(Messages.Batch_resolve_enabled_Tooltip);
+        button.setLayoutData(createTextLayoutData(3));
+        button.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(SelectionEvent event) {
                 checkAllValues();
@@ -455,20 +266,123 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
             }
         });
 
-        Label labelMessageFileSearchResultsAutoSaveFileName = new Label(group, SWT.NONE);
-        labelMessageFileSearchResultsAutoSaveFileName.setLayoutData(createLabelLayoutData());
-        labelMessageFileSearchResultsAutoSaveFileName.setText(Messages.Auto_save_file_name_colon);
+        return button;
+    }
 
-        textMessageFileSearchAutoSaveFileName = WidgetFactory.createText(group);
-        textMessageFileSearchAutoSaveFileName.setToolTipText(Messages.Auto_save_file_name_Tooltip);
-        textMessageFileSearchAutoSaveFileName.setLayoutData(createTextLayoutData(2));
-        textMessageFileSearchAutoSaveFileName.addModifyListener(new ModifyListener() {
+    private Combo createEditModeCombo(Group group) {
+
+        Label labelSoureFileSearchEditMode = new Label(group, SWT.NONE);
+        labelSoureFileSearchEditMode.setLayoutData(createLabelLayoutData());
+        labelSoureFileSearchEditMode.setText(Messages.Double_click_mode_colon);
+
+        Combo combo = WidgetFactory.createReadOnlyCombo(group);
+        combo.setToolTipText(Messages.Tooltip_Double_click_mode);
+        combo.setLayoutData(createTextLayoutData(3, 100));
+        combo.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent event) {
+                checkAllValues();
+            }
+        });
+        fillFileSearchEditModeCombo(combo);
+
+        return combo;
+    }
+
+    private Text createSaveSearchToPathText(Composite group, String tooltip) {
+
+        Label labelSoureFileSearchResultsSaveDirectory = new Label(group, SWT.NONE);
+        labelSoureFileSearchResultsSaveDirectory.setLayoutData(createLabelLayoutData());
+        labelSoureFileSearchResultsSaveDirectory.setText(Messages.Save_results_to_colon);
+
+        Text text = WidgetFactory.createText(group);
+        text.setToolTipText(tooltip);
+        text.setLayoutData(createComboLayoutData(2));
+        text.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent arg0) {
-                if (validateMessageFileSearchAutoSaveFileName()) {
+                if (validateSourceFileSearchSaveDirectory()) {
                     checkAllValues();
                 }
             }
         });
+
+        return text;
+    }
+
+    private void createSelectSearchResultSaveDirectoryButton(Composite group, final Text text) {
+
+        Button buttonSourceFileSearchResultsSaveDirectory = WidgetFactory.createPushButton(group, Messages.Browse + "..."); //$NON-NLS-1$
+        buttonSourceFileSearchResultsSaveDirectory.addSelectionListener(new SelectionListener() {
+
+            public void widgetSelected(SelectionEvent event) {
+
+                DirectoryDialog dialog = new DirectoryDialog(getShell());
+                dialog.setFilterPath(getFilterPath());
+                String directory = dialog.open();
+                if (directory != null) {
+                    text.setText(directory);
+                }
+            }
+
+            public void widgetDefaultSelected(SelectionEvent arg0) {
+            }
+
+            private String getFilterPath() {
+                if (!StringHelper.isNullOrEmpty(text.getText())) {
+                    File directory = new File(text.getText());
+                    if (directory.exists()) {
+                        if (directory.isDirectory()) {
+                            return directory.getAbsolutePath();
+                        } else {
+                            return directory.getParentFile().getAbsolutePath();
+                        }
+                    }
+                }
+                return Preferences.getInstance().getDefaultSourceFileSearchResultsSaveDirectory();
+            }
+        });
+    }
+
+    private Button createAutoSaveEnabledCheckbox(Composite group) {
+
+        Label labelSourceFileSearchResultsAutoSaveEnabled = new Label(group, SWT.NONE);
+        labelSourceFileSearchResultsAutoSaveEnabled.setLayoutData(createLabelLayoutData());
+        labelSourceFileSearchResultsAutoSaveEnabled.setText(Messages.Auto_save_enabled_colon);
+
+        Button button = WidgetFactory.createCheckbox(group);
+        button.setToolTipText(Messages.Auto_save_enabled_Tooltip);
+        button.setLayoutData(createTextLayoutData(3));
+        button.addSelectionListener(new SelectionListener() {
+
+            public void widgetSelected(SelectionEvent event) {
+                checkAllValues();
+                setControlsEnablement();
+            }
+
+            public void widgetDefaultSelected(SelectionEvent arg0) {
+            }
+        });
+
+        return button;
+    }
+
+    private Text createAutoSaveFileNameText(Composite group) {
+
+        Label labelStreamFileSearchResultsAutoSaveFileName = new Label(group, SWT.NONE);
+        labelStreamFileSearchResultsAutoSaveFileName.setLayoutData(createLabelLayoutData());
+        labelStreamFileSearchResultsAutoSaveFileName.setText(Messages.Auto_save_file_name_colon);
+
+        Text text = WidgetFactory.createText(group);
+        text.setToolTipText(Messages.Auto_save_file_name_Tooltip);
+        text.setLayoutData(createComboLayoutData(3));
+        text.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent arg0) {
+                if (validateStreamFileSearchAutoSaveFileName()) {
+                    checkAllValues();
+                }
+            }
+        });
+
+        return text;
     }
 
     @Override
@@ -490,20 +404,31 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
         return super.performOk();
     }
 
+    private int getMaxDepth() {
+        Preferences preferences = Preferences.getInstance();
+        if (Preferences.UNLIMITTED.equals(comboMaxDepth.getText())) {
+            return preferences.getStreamFileSearchMaxDepthSpecialValueUnlimited();
+        } else {
+            return IntHelper.tryParseInt(comboMaxDepth.getText(), preferences.getStreamFileSearchMaxDepth());
+        }
+    }
+
     protected void setStoreToValues() {
 
         Preferences preferences = Preferences.getInstance();
 
-        preferences.setSourceFileSearchBatchResolveEnabled(buttonBatchResolveEnabled.getSelection());
+        preferences.setSourceFileSearchBatchResolveEnabled(buttonSourceFileSearchBatchResolveEnabled.getSelection());
         preferences.setSourceFileSearchResultsEditEnabled(getComboSearchEditMode(comboSourceFileSearchEditMode));
         preferences.setSourceFileSearchResultsSaveDirectory(textSourceFileSearchSaveDirectory.getText());
         preferences.setSourceFileSearchResultsAutoSaveEnabled(buttonSourceFileSearchAutoSaveEnabled.getSelection());
         preferences.setSourceFileSearchResultsAutoSaveFileName(textSourceFileSearchAutoSaveFileName.getText());
 
+        preferences.setStreamFileSearchBatchResolveEnabled(buttonStreamFileSearchBatchResolveEnabled.getSelection());
         preferences.setStreamFileSearchResultsEditEnabled(getComboSearchEditMode(comboStreamFileSearchEditMode));
         preferences.setStreamFileSearchResultsSaveDirectory(textStreamFileSearchSaveDirectory.getText());
         preferences.setStreamFileSearchResultsAutoSaveEnabled(buttonStreamFileSearchAutoSaveEnabled.getSelection());
         preferences.setStreamFileSearchResultsAutoSaveFileName(textStreamFileSearchAutoSaveFileName.getText());
+        preferences.setStreamFileSearchMaxDepth(getMaxDepth());
 
         if (hasIBMiHostContribution) {
             preferences.setMessageFileSearchResultsSaveDirectory(textMessageFileSearchSaveDirectory.getText());
@@ -518,16 +443,20 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
 
         Preferences preferences = Preferences.getInstance();
 
-        buttonBatchResolveEnabled.setSelection(preferences.isSourceFileSearchBatchResolveEnabled());
+        buttonSourceFileSearchBatchResolveEnabled.setSelection(preferences.isSourceFileSearchBatchResolveEnabled());
         setComboSearchEditMode(comboSourceFileSearchEditMode, preferences.isSourceFileSearchResultsEditEnabled());
         textSourceFileSearchSaveDirectory.setText(preferences.getSourceFileSearchResultsAutoSaveDirectory());
         buttonSourceFileSearchAutoSaveEnabled.setSelection(preferences.isSourceFileSearchResultsAutoSaveEnabled());
         textSourceFileSearchAutoSaveFileName.setText(preferences.getSourceFileSearchResultsAutoSaveFileName());
 
+        buttonStreamFileSearchBatchResolveEnabled.setSelection(preferences.isStreamFileSearchBatchResolveEnabled());
         setComboSearchEditMode(comboStreamFileSearchEditMode, preferences.isStreamFileSearchResultsEditEnabled());
         textStreamFileSearchSaveDirectory.setText(preferences.getStreamFileSearchResultsAutoSaveDirectory());
         buttonStreamFileSearchAutoSaveEnabled.setSelection(preferences.isStreamFileSearchResultsAutoSaveEnabled());
         textStreamFileSearchAutoSaveFileName.setText(preferences.getStreamFileSearchResultsAutoSaveFileName());
+
+        int maxDepth = preferences.getStreamFileSearchMaxDepth();
+        setScreenMaxDepth(maxDepth);
 
         if (hasIBMiHostContribution) {
             setComboSearchEditMode(comboMessageFileSearchEditMode, preferences.isMessageFileSearchResultsEditEnabled());
@@ -544,16 +473,20 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
 
         Preferences preferences = Preferences.getInstance();
 
-        buttonBatchResolveEnabled.setSelection(preferences.getDefaultSourceFileSearchBatchResolveEnabled());
+        buttonSourceFileSearchBatchResolveEnabled.setSelection(preferences.getDefaultSourceFileSearchBatchResolveEnabled());
         setComboSearchEditMode(comboSourceFileSearchEditMode, preferences.getDefaultSourceFileSearchResultsEditEnabled());
         textSourceFileSearchSaveDirectory.setText(preferences.getDefaultSourceFileSearchResultsSaveDirectory());
         buttonSourceFileSearchAutoSaveEnabled.setSelection(preferences.getDefaultSourceFileSearchResultsAutoSaveEnabled());
         textSourceFileSearchAutoSaveFileName.setText(preferences.getDefaultSourceFileSearchResultsAutoSaveFileName());
 
+        buttonStreamFileSearchBatchResolveEnabled.setSelection(preferences.getDefaultStreamFileSearchBatchResolveEnabled());
         setComboSearchEditMode(comboStreamFileSearchEditMode, preferences.getDefaultStreamFileSearchResultsEditEnabled());
         textStreamFileSearchSaveDirectory.setText(preferences.getDefaultStreamFileSearchResultsSaveDirectory());
         buttonStreamFileSearchAutoSaveEnabled.setSelection(preferences.getDefaultStreamFileSearchResultsAutoSaveEnabled());
         textStreamFileSearchAutoSaveFileName.setText(preferences.getDefaultStreamFileSearchResultsAutoSaveFileName());
+
+        int maxDepth = preferences.getDefaultStreamFileSearchMaxDepth();
+        setScreenMaxDepth(maxDepth);
 
         if (hasIBMiHostContribution) {
             setComboSearchEditMode(comboMessageFileSearchEditMode, preferences.getDefaultMessageFileSearchResultsEditEnabled());
@@ -564,6 +497,15 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
 
         checkAllValues();
         setControlsEnablement();
+    }
+
+    private void setScreenMaxDepth(int maxDepth) {
+        Preferences preferences = Preferences.getInstance();
+        if (maxDepth == preferences.getStreamFileSearchMaxDepthSpecialValueUnlimited()) {
+            comboMaxDepth.setText(Preferences.UNLIMITTED);
+        } else {
+            comboMaxDepth.setText(Integer.toString(maxDepth));
+        }
     }
 
     private boolean getComboSearchEditMode(Combo combo) {
@@ -735,6 +677,12 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
             textSourceFileSearchAutoSaveFileName.setEnabled(false);
         }
 
+        if (buttonStreamFileSearchAutoSaveEnabled.getSelection()) {
+            textStreamFileSearchAutoSaveFileName.setEnabled(true);
+        } else {
+            textStreamFileSearchAutoSaveFileName.setEnabled(false);
+        }
+
         if (hasIBMiHostContribution) {
             if (buttonMessageFileSearchAutoSaveEnabled.getSelection()) {
                 textMessageFileSearchAutoSaveFileName.setEnabled(true);
@@ -760,11 +708,21 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
         return new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
     }
 
-    private GridData createTextLayoutData() {
-        return createTextLayoutData(1);
+    private GridData createLabelLayoutData(int horizontalSpan) {
+        return new GridData(SWT.LEFT, SWT.CENTER, false, false, horizontalSpan, 1);
     }
 
     private GridData createTextLayoutData(int horizontalSpan) {
         return new GridData(SWT.FILL, SWT.CENTER, true, false, horizontalSpan, 1);
+    }
+
+    private GridData createTextLayoutData(int horizontalSpan, int width) {
+        GridData gridData = new GridData(SWT.BEGINNING, SWT.CENTER, false, false, horizontalSpan, 1);
+        gridData.widthHint = width;
+        return gridData;
+    }
+
+    private GridData createComboLayoutData(int horizontalSpan) {
+        return createTextLayoutData(horizontalSpan, 300);
     }
 }

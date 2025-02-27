@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.internal.exception.InvalidFilterException;
+import biz.isphere.core.preferences.Preferences;
 
 /**
  * This class adds individual objects or resolves filter strings in order to add
@@ -35,12 +36,11 @@ public abstract class AbstractStreamFileSearchDelegate {
         this.monitor = monitor;
     }
 
-    public boolean addElements(HashMap<String, SearchElement> searchElements, String path, String file, StreamFileSearchFilter filter, int maxDepth)
-        throws Exception {
+    public boolean addElements(HashMap<String, SearchElement> searchElements, String path, String file, int maxDepth) throws Exception {
 
         String streamFileFilterString = produceStreamFileFilterString(path, file); // $NON-NLS-1$
 
-        return addElementsFromFilterString(searchElements, filter, maxDepth, streamFileFilterString);
+        return addElementsFromFilterString(searchElements, maxDepth, streamFileFilterString);
     }
 
     protected abstract String produceStreamFileFilterString(String path, String file);
@@ -53,8 +53,7 @@ public abstract class AbstractStreamFileSearchDelegate {
 
     protected abstract String getResourceType(Object resource);
 
-    public boolean addElementsFromFilterString(Map<String, SearchElement> searchElements, StreamFileSearchFilter streamFileSearchFilter, int maxDepth,
-        String... filterStrings) throws Exception {
+    public boolean addElementsFromFilterString(Map<String, SearchElement> searchElements, int maxDepth, String... filterStrings) throws Exception {
 
         boolean doContinue = true;
         Object[] children = null;
@@ -80,14 +79,18 @@ public abstract class AbstractStreamFileSearchDelegate {
                         }
                         Object element = children[idx2];
                         if (isDirectory(element)) {
-                            if (maxDepth > 0) {
+                            if (Preferences.getInstance().isStreamFileSearchUnlimitedMaxDepth(maxDepth) || maxDepth > 0) {
                                 String path = getResourcePath(element);
                                 String fileOrTypes = getFileOrTypesFromFilterString(filterStrings[idx]);
                                 String filterString = produceStreamFileFilterString(path, fileOrTypes);
-                                doContinue = addElementsFromFilterString(searchElements, streamFileSearchFilter, maxDepth - 1, filterString);
+                                if (Preferences.getInstance().isStreamFileSearchUnlimitedMaxDepth(maxDepth)) {
+                                    doContinue = addElementsFromFilterString(searchElements, maxDepth, filterString);
+                                } else {
+                                    doContinue = addElementsFromFilterString(searchElements, maxDepth - 1, filterString);
+                                }
                             }
                         } else if (isStreamFile(element)) {
-                            addElement(searchElements, streamFileSearchFilter, element);
+                            addElement(searchElements, element);
                         }
 
                         if (!doContinue) {
@@ -118,7 +121,7 @@ public abstract class AbstractStreamFileSearchDelegate {
      * @param searchElements - list of elements that are searched
      * @param streamFile - stream file that is added to the list
      */
-    private void addElement(Map<String, SearchElement> searchElements, StreamFileSearchFilter streamFileSearchFilter, Object streamFile) {
+    private void addElement(Map<String, SearchElement> searchElements, Object streamFile) {
 
         String directory = getResourceDirectory(streamFile);
         String file = getResourceName(streamFile);
@@ -130,9 +133,7 @@ public abstract class AbstractStreamFileSearchDelegate {
         aSearchElement.setType(type);
 
         // Check stream file type
-        if (streamFileSearchFilter == null || streamFileSearchFilter.isItemSelected(aSearchElement)) {
-            addSearchElement(searchElements, aSearchElement);
-        }
+        addSearchElement(searchElements, aSearchElement);
     }
 
     private void addSearchElement(Map<String, SearchElement> searchElements, SearchElement aSearchElement) {

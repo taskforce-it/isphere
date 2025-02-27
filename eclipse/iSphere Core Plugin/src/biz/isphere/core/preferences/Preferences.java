@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2024 iSphere Project Owners
+ * Copyright (c) 2012-2025 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,6 +78,12 @@ public final class Preferences {
 
     private static final String TOKEN_SEPARATOR = "|"; //$NON-NLS-1$
 
+    /**
+     * Unlimited depth of subdirectories when searching stream file.
+     */
+    private static final int UNLIMITTED_DEPTH = -1;
+    public static final String UNLIMITTED = "*UNLIMITED";
+
     /*
      * Preferences keys:
      */
@@ -144,7 +150,7 @@ public final class Preferences {
     public static final String MONITOR_DTAQ_NUMBER_OF_MESSAGES = MONITOR_DTAQ + "NUMBER_OF_MESSAGES"; //$NON-NLS-1$
 
     private static final String SOURCE_FILE_SEARCH = DOMAIN + "SOURCE_FILE_SEARCH."; //$NON-NLS-1$
-    public static final String SOURCE_FILE_SEARCH_IS_BATCH_RESOLVE_ENABLED = SOURCE_FILE_SEARCH + "IS_BATCH_RESOLVE"; //$NON-NLS-1$
+    private static final String SOURCE_FILE_SEARCH_IS_BATCH_RESOLVE_ENABLED = SOURCE_FILE_SEARCH + "IS_BATCH_RESOLVE"; //$NON-NLS-1$
     private static final String SOURCE_FILE_SEARCH_RESULTS = DOMAIN + "SOURCE_FILE_SEARCH_RESULTS."; //$NON-NLS-1$
     private static final String SOURCE_FILE_SEARCH_RESULTS_IS_EDIT_ENABLED = SOURCE_FILE_SEARCH_RESULTS + "IS_EDIT_ENABLED"; //$NON-NLS-1$
     private static final String SOURCE_FILE_SEARCH_RESULTS_SAVE_DIRECTORY = SOURCE_FILE_SEARCH_RESULTS + "SAVE_DIRECTORY"; //$NON-NLS-1$
@@ -163,6 +169,9 @@ public final class Preferences {
     private static final String MESSAGE_FILE_SEARCH_DIRECTORY = "messageFileSearch"; //$NON-NLS-1$
     private static final String MESSAGE_FILE_SEARCH_FILE_NAME = "MessageFileSearchResult"; //$NON-NLS-1$
 
+    private static final String STREAM_FILE_SEARCH = DOMAIN + "STREAM_FILE_SEARCH."; //$NON-NLS-1$
+    private static final String STREAM_FILE_SEARCH_IS_BATCH_RESOLVE_ENABLED = STREAM_FILE_SEARCH + "IS_BATCH_RESOLVE"; //$NON-NLS-1$
+    private static final String STREAM_FILE_SEARCH_MAX_DEPTH = STREAM_FILE_SEARCH + "STREAM_FILE_SEARCH_MAX_DEPTH"; //$NON-NLS-1$
     private static final String STREAM_FILE_SEARCH_RESULTS = DOMAIN + "STREAM_FILE_SEARCH_RESULTS."; //$NON-NLS-1$
     private static final String STREAM_FILE_SEARCH_RESULTS_IS_EDIT_ENABLED = STREAM_FILE_SEARCH_RESULTS + "IS_EDIT_ENABLED"; //$NON-NLS-1$
     private static final String STREAM_FILE_SEARCH_RESULTS_SAVE_DIRECTORY = STREAM_FILE_SEARCH_RESULTS + "SAVE_DIRECTORY"; //$NON-NLS-1$
@@ -201,14 +210,14 @@ public final class Preferences {
 
     private static final String JDBC_USE_ISPHERE_MANAGER = "USE_ISPHERE_MANAGER"; //$NON-NLS-1$
 
-    public static final String COMPARE_FILTER_FILE_EXTENSIONS = DOMAIN + "fileextensions"; //$NON-NLS-1$
-    public static final String COMPARE_FILTER_IMPORT_EXPORT_LOCATION = DOMAIN + "importexportlocation"; //$NON-NLS-1$
+    private static final String COMPARE_FILTER_FILE_EXTENSIONS = DOMAIN + "fileextensions"; //$NON-NLS-1$
+    private static final String COMPARE_FILTER_IMPORT_EXPORT_LOCATION = DOMAIN + "importexportlocation"; //$NON-NLS-1$
 
     private static final String SYNC_MEMBERS = DOMAIN + "SYNC_MEMBERS."; //$NON-NLS-1$
     private static final String SYNC_MEMBERS_EDITOR_DETACHED = SYNC_MEMBERS + "EDITOR_DETACHED"; //$NON-NLS-1$
     private static final String SYNC_MEMBERS_EDITOR_CENTER_ON_SCREEN = SYNC_MEMBERS + "EDITOR_CENTER_ON_SCREEN"; //$NON-NLS-1$
     private static final String SYNC_MEMBERS_EDITOR_SIDE_BY_SIDE = SYNC_MEMBERS + "EDITOR_SIDE_BY_SIDE"; //$NON-NLS-1$
-    public static final String SYNC_MEMBERS_FILES_EXCLUDED = SYNC_MEMBERS + "FILES_EXCLUDED"; //$NON-NLS-1$
+    private static final String SYNC_MEMBERS_FILES_EXCLUDED = SYNC_MEMBERS + "FILES_EXCLUDED"; //$NON-NLS-1$
 
     /**
      * Private constructor to ensure the Singleton pattern.
@@ -465,6 +474,10 @@ public final class Preferences {
         return preferenceStore.getBoolean(SOURCE_FILE_SEARCH_RESULTS_IS_EDIT_ENABLED);
     }
 
+    public boolean isStreamFileSearchBatchResolveEnabled() {
+        return preferenceStore.getBoolean(STREAM_FILE_SEARCH_IS_BATCH_RESOLVE_ENABLED);
+    }
+
     public boolean isStreamFileSearchResultsEditEnabled() {
         return preferenceStore.getBoolean(STREAM_FILE_SEARCH_RESULTS_IS_EDIT_ENABLED);
     }
@@ -565,6 +578,18 @@ public final class Preferences {
 
     public String getStreamFileSearchResultsAutoSaveFileName() {
         return preferenceStore.getString(STREAM_FILE_SEARCH_RESULTS_AUTO_SAVE_FILE);
+    }
+
+    public boolean isStreamFileSearchUnlimitedMaxDepth(int maxDepth) {
+        return maxDepth == UNLIMITTED_DEPTH;
+    }
+
+    public int getStreamFileSearchMaxDepth() {
+        return preferenceStore.getInt(STREAM_FILE_SEARCH_MAX_DEPTH);
+    }
+
+    public int getStreamFileSearchMaxDepthSpecialValueUnlimited() {
+        return UNLIMITTED_DEPTH;
     }
 
     public String getStreamFileSearchResultsAutoSaveDirectory() {
@@ -1003,6 +1028,10 @@ public final class Preferences {
         preferenceStore.setValue(MESSAGE_FILE_SEARCH_RESULTS_AUTO_SAVE_FILE, filename);
     }
 
+    public void setStreamFileSearchBatchResolveEnabled(boolean enabled) {
+        preferenceStore.setValue(STREAM_FILE_SEARCH_IS_BATCH_RESOLVE_ENABLED, enabled);
+    }
+
     public void setStreamFileSearchResultsEditEnabled(boolean editable) {
         preferenceStore.setValue(STREAM_FILE_SEARCH_RESULTS_IS_EDIT_ENABLED, editable);
     }
@@ -1021,6 +1050,10 @@ public final class Preferences {
 
     public void setStreamFileSearchResultsAutoSaveFileName(String filename) {
         preferenceStore.setValue(STREAM_FILE_SEARCH_RESULTS_AUTO_SAVE_FILE, filename);
+    }
+
+    public void setStreamFileSearchMaxDepth(int maxDepth) {
+        preferenceStore.setValue(STREAM_FILE_SEARCH_MAX_DEPTH, maxDepth);
     }
 
     public void setMessageFileCompareLineWidth(int lineWidth) {
@@ -1173,6 +1206,9 @@ public final class Preferences {
         preferenceStore.setDefault(MESSAGE_FILE_SEARCH_RESULTS_AUTO_SAVE_FILE, getDefaultMessageFileSearchResultsAutoSaveFileName());
         preferenceStore.setDefault(MESSAGE_FILE_SEARCH_SEARCHSTRING, getDefaultMessageFileSearchString());
         preferenceStore.setDefault(MESSAGE_FILE_SEARCH_EXPORT_DIRECTORY, getDefaultMessageFileSearchExportDirectory());
+
+        preferenceStore.setDefault(STREAM_FILE_SEARCH_IS_BATCH_RESOLVE_ENABLED, getDefaultStreamFileSearchBatchResolveEnabled());
+        preferenceStore.setDefault(STREAM_FILE_SEARCH_MAX_DEPTH, getDefaultStreamFileSearchMaxDepth());
 
         preferenceStore.setDefault(STREAM_FILE_SEARCH_RESULTS_IS_EDIT_ENABLED, getDefaultStreamFileSearchResultsEditEnabled());
         preferenceStore.setDefault(STREAM_FILE_SEARCH_RESULTS_SAVE_DIRECTORY, getDefaultStreamFileSearchResultsSaveDirectory());
@@ -1575,9 +1611,10 @@ public final class Preferences {
     }
 
     /**
-     * Returns the default 'is auto save' flag of the view search results view.
+     * Returns the default 'is batch resolve enabled' flag of the source file
+     * search.
      * 
-     * @return default 'is auto save' flag.
+     * @return default 'is batch resolve enabled' flag.
      */
     public boolean getDefaultSourceFileSearchBatchResolveEnabled() {
         return false;
@@ -1733,6 +1770,25 @@ public final class Preferences {
      */
     public String getDefaultMessageFileSearchExportDirectory() {
         return FileHelper.getDefaultRootDirectory();
+    }
+
+    /**
+     * Returns the default 'is batch resolve enabled' flag of the stream file
+     * search.
+     * 
+     * @return default 'is batch resolve enabled' flag.
+     */
+    public boolean getDefaultStreamFileSearchBatchResolveEnabled() {
+        return false;
+    }
+
+    /**
+     * Returns the default 'maximum depth' value of the stream file search.
+     * 
+     * @return default 'maximum depth' value.
+     */
+    public int getDefaultStreamFileSearchMaxDepth() {
+        return 1;
     }
 
     /**

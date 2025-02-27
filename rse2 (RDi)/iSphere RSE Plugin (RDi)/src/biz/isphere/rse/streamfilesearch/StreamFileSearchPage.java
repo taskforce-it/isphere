@@ -13,9 +13,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -32,10 +37,13 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialogPage;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.internal.ColorHelper;
 import biz.isphere.core.internal.exception.InvalidFilterException;
+import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.search.GenericSearchOption;
 import biz.isphere.core.search.SearchArgument;
 import biz.isphere.core.search.SearchOptionConfig;
@@ -60,24 +68,29 @@ public class StreamFileSearchPage extends AbstractSearchPage {
 
     public static final String ID = "biz.isphere.rse.streamfilesearch.StreamFileSearchPage"; //$NON-NLS-1$
 
-    private static final int MAX_DEPTH = StreamFileSearchFilterResolver.MAX_DEPTH;
-
     private static final String STREAM_FILE = "streamFile"; //$NON-NLS-1$
     private static final String DIRECTORY = "directory"; //$NON-NLS-1$
+    private static final String MAX_DEPTH = "maxDepth"; //$NON-NLS-1$
     private static final String SHOW_RECORDS = "showRecords"; //$NON-NLS-1$
 
     private static int DEFAULT_START_COLUMN = 1;
     private static int DEFAULT_END_COLUMN = 100;
     private static int MAX_END_COLUMN = SearchArgument.MAX_SOURCE_FILE_SEARCH_COLUMN;
 
+    private Preferences preferences;
+
     private StreamFilePrompt streamFilePrompt;
     private Combo filterSrcTypeCombo;
+    private Combo comboMaxDepth;
+    private Label labelMaxDepthWarning;
     private Button showAllRecordsButton;
 
     private Composite targetSourceMemberComposite;
 
     public StreamFileSearchPage() {
         super();
+
+        preferences = Preferences.getInstance();
     }
 
     @Override
@@ -107,25 +120,69 @@ public class StreamFileSearchPage extends AbstractSearchPage {
         return endColumnText;
     }
 
-    protected void createOptionItems(Group parent) {
+    protected void createOptionItems(Group parent, int numColumns) {
 
         Label filterSrcTypeLabel = new Label(parent, SWT.NONE);
-        filterSrcTypeLabel.setLayoutData(new GridData());
-        filterSrcTypeLabel.setText(Messages.Member_type_colon);
-        filterSrcTypeLabel.setToolTipText(Messages.Specifies_the_generic_source_type_of_the_members_that_are_included_in_the_search);
+        filterSrcTypeLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, 1, 1));
+        filterSrcTypeLabel.setText(Messages.Stream_file_type_colon);
+        filterSrcTypeLabel.setToolTipText(Messages.Specifies_the_generic_type_of_the_stream_files_that_are_included_in_the_search);
 
         filterSrcTypeCombo = WidgetFactory.createCombo(parent);
-        GridData filterSrcTypeGridData = new GridData();
+        GridData filterSrcTypeGridData = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, numColumns - 1, 1);
         filterSrcTypeGridData.widthHint = 100;
         filterSrcTypeCombo.setLayoutData(filterSrcTypeGridData);
-        filterSrcTypeCombo.setToolTipText(Messages.Specifies_the_generic_source_type_of_the_members_that_are_included_in_the_search);
+        filterSrcTypeCombo.setToolTipText(Messages.Specifies_the_generic_type_of_the_stream_files_that_are_included_in_the_search);
         filterSrcTypeCombo.setItems(new String[] { "*", "*BLANK" }); //$NON-NLS-1$ //$NON-NLS-2$
         filterSrcTypeCombo.select(0);
 
+        Label maxDepthLabel = new Label(parent, SWT.NONE);
+        maxDepthLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, 1, 1));
+        maxDepthLabel.setText(Messages.Max_depth_colon);
+        maxDepthLabel.setToolTipText(Messages.Specifies_the_maximum_depth_of_sub_directories_included_in_the_search);
+
+        comboMaxDepth = WidgetFactory.createIntegerCombo(parent, true);
+        comboMaxDepth.setToolTipText(Messages.Specifies_the_maximum_depth_of_sub_directories_included_in_the_search);
+        GridData maxDepthGridData = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, 1, 1);
+        maxDepthGridData.widthHint = 100;
+        comboMaxDepth.setLayoutData(maxDepthGridData);
+        comboMaxDepth.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent event) {
+                updateMaxDepthWarning();
+            }
+        });
+        comboMaxDepth.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetDefaultSelected(SelectionEvent e) {
+                updateMaxDepthWarning();
+            }
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                updateMaxDepthWarning();
+            }
+        });
+        comboMaxDepth.setItems(new String[] { "1", Preferences.UNLIMITTED });
+
+        labelMaxDepthWarning = new Label(parent, SWT.NONE);
+        labelMaxDepthWarning.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, numColumns - 2, 1));
+        labelMaxDepthWarning.setForeground(ColorHelper.getOrange());
+        labelMaxDepthWarning.setText(Messages.Warning_Maximum_depth_set_to_more_than_one_level);
+
         showAllRecordsButton = WidgetFactory.createCheckbox(parent);
+        showAllRecordsButton.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, numColumns, 1));
         showAllRecordsButton.setText(Messages.ShowAllRecords);
         showAllRecordsButton.setToolTipText(Messages.Specify_whether_all_matching_records_are_returned);
         showAllRecordsButton.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 2, 1));
+    }
+
+    private void updateMaxDepthWarning() {
+        if (labelMaxDepthWarning != null) {
+            if (getMaxDepth() != 1) {
+                labelMaxDepthWarning.setVisible(true);
+            } else {
+                labelMaxDepthWarning.setVisible(false);
+            }
+        }
     }
 
     /**
@@ -146,6 +203,9 @@ public class StreamFileSearchPage extends AbstractSearchPage {
     protected void loadScreenValues() {
         super.loadScreenValues();
 
+        // comboMaxDepth.setText(Integer.toString(loadIntValue(MAX_DEPTH,
+        // preferences.getStreamFileSearchMaxDepth())));
+        setMaxDepth(loadIntValue(MAX_DEPTH, preferences.getStreamFileSearchMaxDepth()));
         showAllRecordsButton.setSelection(loadBooleanValue(SHOW_RECORDS, true));
 
         streamFilePrompt.setDirectoryName(loadValue(DIRECTORY, "")); //$NON-NLS-1$
@@ -185,6 +245,7 @@ public class StreamFileSearchPage extends AbstractSearchPage {
     protected void storeScreenValues() {
         super.storeScreenValues();
 
+        storeValue(MAX_DEPTH, getMaxDepth());
         storeValue(SHOW_RECORDS, isShowAllRecords());
 
         storeValue(DIRECTORY, getDirectoryName());
@@ -232,6 +293,32 @@ public class StreamFileSearchPage extends AbstractSearchPage {
     }
 
     /**
+     * Returns the maximum depth of subdirectories.
+     * 
+     * @return value of the maximum depth combo box
+     */
+    private int getMaxDepth() {
+        if (Preferences.UNLIMITTED.equals(comboMaxDepth.getText())) {
+            return preferences.getStreamFileSearchMaxDepthSpecialValueUnlimited();
+        } else {
+            return IntHelper.tryParseInt(comboMaxDepth.getText(), preferences.getStreamFileSearchMaxDepth());
+        }
+    }
+
+    /**
+     * Set the maximum depth value.
+     * 
+     * @param maxDepth
+     */
+    private void setMaxDepth(int maxDepth) {
+        if (preferences.isStreamFileSearchUnlimitedMaxDepth(maxDepth)) {
+            comboMaxDepth.setText(Preferences.UNLIMITTED);
+        } else {
+            comboMaxDepth.setText(Integer.toString(maxDepth));
+        }
+    }
+
+    /**
      * Returns the status of the "show records" check box.
      * 
      * @return status of the "show records" check box
@@ -272,6 +359,18 @@ public class StreamFileSearchPage extends AbstractSearchPage {
 
         if (StringHelper.isNullOrEmpty(getSourceType())) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.Enter_or_select_a_simple_or_generic_member_type);
+            filterSrcTypeCombo.setFocus();
+            return false;
+        }
+
+        if (StringHelper.isNullOrEmpty(comboMaxDepth.getText())) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.Enter_the_maximum_depth_of_subdirectories_to_be_searched);
+            filterSrcTypeCombo.setFocus();
+            return false;
+        }
+
+        if (getMaxDepth() < -1) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.Enter_the_maximum_depth_of_subdirectories_to_be_searched);
             filterSrcTypeCombo.setFocus();
             return false;
         }
@@ -318,25 +417,40 @@ public class StreamFileSearchPage extends AbstractSearchPage {
             }
 
             searchOptions.setGenericOption(GenericSearchOption.Key.STMF_TYPE, getSourceType());
-
-            StreamFileSearchFilter streamFileSearchFilter = new StreamFileSearchFilter(searchOptions);
-
-            Map<String, SearchElement> searchElements;
-            if (isFilterRadioButtonSelected()) {
-                searchElements = loadFilterSearchElements(tConnection, streamFileSearchFilter);
-            } else {
-                searchElements = loadStreamFileSearchElements(tConnection, directory, streamFile, streamFileSearchFilter);
-            }
-
-            if (searchElements.size() == 0) {
-                MessageDialog.openInformation(getShell(), Messages.Information, Messages.No_objects_found_that_match_the_selection_criteria);
-                return false;
-            }
+            searchOptions.setGenericOption(GenericSearchOption.Key.MAX_DEPTH, getMaxDepth());
 
             IWorkbenchWindow workbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-            ArrayList<SearchElement> selectedElements = new ArrayList<SearchElement>(searchElements.values());
 
-            new RSESearchExec(workbenchWindow, tConnection).execute(selectedElements, searchOptions);
+            if (preferences.isStreamFileSearchBatchResolveEnabled()) {
+
+                if (isFilterRadioButtonSelected()) {
+                    ArrayList<Object> selectedFilters = new ArrayList<Object>();
+                    selectedFilters.add(getFilter());
+                    new RSESearchExec(workbenchWindow, tConnection).resolveAndExecute(selectedFilters, searchOptions);
+                } else {
+                    new RSESearchExec(workbenchWindow, tConnection).resolveAndExecute(directory, streamFile, searchOptions);
+                }
+
+            } else {
+
+                Map<String, SearchElement> searchElements;
+
+                if (isFilterRadioButtonSelected()) {
+                    searchElements = loadFilterSearchElements(tConnection, getFilter());
+                } else {
+                    searchElements = loadStreamFileSearchElements(tConnection, directory, streamFile);
+                }
+
+                StreamFileSearchFilter filter = new StreamFileSearchFilter();
+                ArrayList<SearchElement> selectedElements = filter.applyFilter(searchElements.values(), searchOptions);
+
+                if (searchElements.size() == 0) {
+                    MessageDialog.openInformation(getShell(), Messages.Information, Messages.No_objects_found_that_match_the_selection_criteria);
+                    return false;
+                }
+
+                new RSESearchExec(workbenchWindow, tConnection).execute(selectedElements, searchOptions);
+            }
 
         } catch (Exception e) {
             if (!(e instanceof InvalidFilterException)) {
@@ -358,15 +472,15 @@ public class StreamFileSearchPage extends AbstractSearchPage {
         return false;
     }
 
-    private Map<String, SearchElement> loadStreamFileSearchElements(IBMiConnection connection, String directory, String streamFile,
-        StreamFileSearchFilter filter) throws InterruptedException {
+    private Map<String, SearchElement> loadStreamFileSearchElements(IBMiConnection connection, String directory, String streamFile)
+        throws InterruptedException {
 
         HashMap<String, SearchElement> searchElements = new HashMap<String, SearchElement>();
 
         try {
 
             StreamFileSearchDelegate delegate = new StreamFileSearchDelegate(getShell(), connection);
-            delegate.addElements(searchElements, directory, streamFile, filter, MAX_DEPTH);
+            delegate.addElements(searchElements, directory, streamFile, getMaxDepth());
 
         } catch (Throwable e) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
@@ -375,12 +489,12 @@ public class StreamFileSearchPage extends AbstractSearchPage {
         return searchElements;
     }
 
-    private Map<String, SearchElement> loadFilterSearchElements(IBMiConnection connection, StreamFileSearchFilter filter) throws Exception {
+    private Map<String, SearchElement> loadFilterSearchElements(IBMiConnection connection, ISystemFilter filter) throws Exception {
 
         ArrayList<Object> selectedFilters = new ArrayList<Object>();
-        selectedFilters.add(getFilter());
+        selectedFilters.add(filter);
 
-        StreamFileSearchFilterResolver filterResolver = new StreamFileSearchFilterResolver(getShell(), connection, filter);
+        StreamFileSearchFilterResolver filterResolver = new StreamFileSearchFilterResolver(getShell(), connection);
         Map<String, SearchElement> searchElements = filterResolver.resolveRSEFilter(selectedFilters);
 
         return searchElements;
@@ -396,6 +510,7 @@ public class StreamFileSearchPage extends AbstractSearchPage {
         // SearchOptionConfig config = (SearchOptionConfig)anEvent.data;
 
         filterSrcTypeCombo.setEnabled(true);
+        comboMaxDepth.setEnabled(true);
         showAllRecordsButton.setEnabled(true);
     }
 }

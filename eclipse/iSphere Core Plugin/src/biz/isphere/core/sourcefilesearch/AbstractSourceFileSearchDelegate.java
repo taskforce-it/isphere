@@ -41,7 +41,7 @@ public abstract class AbstractSourceFileSearchDelegate {
 
         String memberFilterString = produceMemberFilterString(library, sourceFile, sourceMember, "*"); //$NON-NLS-1$
 
-        return addElementsFromFilterString(searchElements, memberFilterString.toString());
+        return addElementsFromFilterString(searchElements, memberFilterString);
     }
 
     protected abstract String produceMemberFilterString(String library, String sourceFile, String sourceMember, String memberType);

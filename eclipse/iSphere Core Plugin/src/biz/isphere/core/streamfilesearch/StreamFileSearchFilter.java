@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2022 iSphere Project Team
+ * Copyright (c) 2012-2025 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,7 @@ public class StreamFileSearchFilter {
     private SearchOptions searchOptions;
 
     public StreamFileSearchFilter() {
-        this.searchOptions = new SearchOptions();
+        this.searchOptions = SearchOptions.streamFileSearchOption();
     }
 
     public StreamFileSearchFilter(SearchOptions searchOptions) {
@@ -79,12 +79,6 @@ public class StreamFileSearchFilter {
                 return false;
             }
         }
-
-        // ISeriesPDMPatternMatch matcher = new
-        // ISeriesPDMPatternMatch(type.toUpperCase(), true);
-        // if (matcher.matches(itemType.toUpperCase())){
-        // return true;
-        // }
 
         try {
             if (StringHelper.matchesGeneric(itemType, type)) {

@@ -19,6 +19,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -33,9 +34,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.progress.WorkbenchJob;
 
+import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.Messages;
 import biz.isphere.core.annotations.CMOne;
+import biz.isphere.core.internal.ColorHelper;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.search.AbstractSearchDialog;
 import biz.isphere.core.search.GenericSearchOption;
@@ -46,9 +49,14 @@ import biz.isphere.core.swt.widgets.WidgetFactory;
 
 public class SearchDialog extends AbstractSearchDialog<SearchElement> {
 
+    private static final String MAX_DEPTH = "maxDepth"; //$NON-NLS-1$
     private static final String SHOW_RECORDS = "showRecords"; //$NON-NLS-1$
 
+    private Preferences preferences;
+
     private Map<String, SearchElement> searchElements;
+    private Combo comboMaxDepth;
+    private Label labelMaxDepthWarning;
     private Button showAllRecordsButton;
     private Combo filterTypeCombo;
     private RefreshJob refreshJob = new RefreshJob();
@@ -86,6 +94,7 @@ public class SearchDialog extends AbstractSearchDialog<SearchElement> {
     }
 
     private void init(Map<String, SearchElement> searchElements) {
+        this.preferences = Preferences.getInstance();
         this.searchElements = searchElements;
         setListBoxEnabled(hasSearchElements());
     }
@@ -114,8 +123,12 @@ public class SearchDialog extends AbstractSearchDialog<SearchElement> {
 
         ArrayList<String> selectedItems = new ArrayList<String>();
 
+        // TODO: remove lines, most likely not required (Thomas Raddatz,
+        // 24.2.2025)
         StreamFileSearchFilter filter = new StreamFileSearchFilter();
         ArrayList<SearchElement> selectedSearchElements = filter.applyFilter(searchElements.values(), getSearchOptions());
+        // ------------------------------------------------------------------------
+
         for (SearchElement searchElement : selectedSearchElements) {
             selectedItems.add(searchElement.toString());
         }
@@ -140,12 +153,12 @@ public class SearchDialog extends AbstractSearchDialog<SearchElement> {
 
     @Override
     protected String getSearchArgument() {
-        return Preferences.getInstance().getStreamFileSearchString();
+        return preferences.getStreamFileSearchString();
     }
 
     @Override
     protected void setSearchArgument(String argument) {
-        Preferences.getInstance().setStreamFileSearchString(argument);
+        preferences.setStreamFileSearchString(argument);
     }
 
     @Override
@@ -154,7 +167,7 @@ public class SearchDialog extends AbstractSearchDialog<SearchElement> {
         Group groupOptions = new Group(container, SWT.NONE);
         groupOptions.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
         groupOptions.setText(Messages.Options);
-        groupOptions.setLayout(new GridLayout(2, false));
+        groupOptions.setLayout(new GridLayout(3, false));
 
         Label filterTypeLabel = new Label(groupOptions, SWT.NONE);
         filterTypeLabel.setLayoutData(new GridData());
@@ -164,6 +177,7 @@ public class SearchDialog extends AbstractSearchDialog<SearchElement> {
         filterTypeCombo = WidgetFactory.createCombo(groupOptions);
         GridData filterTypeGridData = new GridData();
         filterTypeGridData.widthHint = 100;
+        filterTypeGridData.horizontalSpan = 2;
         filterTypeCombo.setLayoutData(filterTypeGridData);
         filterTypeCombo.setToolTipText(Messages.Specifies_the_generic_type_of_the_stream_files_that_are_included_in_the_search);
         filterTypeCombo.setItems(new String[] { "*", "*BLANK" }); //$NON-NLS-1$
@@ -183,10 +197,59 @@ public class SearchDialog extends AbstractSearchDialog<SearchElement> {
             }
         });
 
+        Label maxDepthLabel = new Label(groupOptions, SWT.NONE);
+        maxDepthLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, 1, 1));
+        maxDepthLabel.setText(Messages.Max_depth_colon);
+        maxDepthLabel.setToolTipText(Messages.Specifies_the_maximum_depth_of_sub_directories_included_in_the_search);
+
+        comboMaxDepth = WidgetFactory.createIntegerCombo(groupOptions, true);
+        comboMaxDepth.setToolTipText(Messages.Specifies_the_maximum_depth_of_sub_directories_included_in_the_search);
+        GridData maxDepthGridData = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, 1, 1);
+        maxDepthGridData.widthHint = 100;
+        comboMaxDepth.setLayoutData(maxDepthGridData);
+        comboMaxDepth.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent event) {
+                updateMaxDepthWarning();
+            }
+        });
+        comboMaxDepth.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetDefaultSelected(SelectionEvent e) {
+                updateMaxDepthWarning();
+            }
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                updateMaxDepthWarning();
+            }
+        });
+        comboMaxDepth.setItems(new String[] { "1", Preferences.UNLIMITTED });
+
+        if (hasSearchElements()) {
+            comboMaxDepth.setEnabled(false);
+        } else {
+            comboMaxDepth.setEnabled(true);
+        }
+
+        labelMaxDepthWarning = new Label(groupOptions, SWT.NONE);
+        labelMaxDepthWarning.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, 1, 1));
+        labelMaxDepthWarning.setForeground(ColorHelper.getOrange());
+        labelMaxDepthWarning.setText(Messages.Warning_Maximum_depth_set_to_more_than_one_level);
+
         showAllRecordsButton = WidgetFactory.createCheckbox(groupOptions);
         showAllRecordsButton.setText(Messages.ShowAllRecords);
         showAllRecordsButton.setToolTipText(Messages.Specify_whether_all_matching_records_are_returned);
-        showAllRecordsButton.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 2, 1));
+        showAllRecordsButton.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 3, 1));
+    }
+
+    private void updateMaxDepthWarning() {
+        if (labelMaxDepthWarning != null) {
+            if (getMaxDepth() != 1) {
+                labelMaxDepthWarning.setVisible(true);
+            } else {
+                labelMaxDepthWarning.setVisible(false);
+            }
+        }
     }
 
     @Override
@@ -213,18 +276,57 @@ public class SearchDialog extends AbstractSearchDialog<SearchElement> {
 
     @Override
     protected void loadElementValues() {
+
+        int maxDepth;
+        if (comboMaxDepth.getEnabled()) {
+            maxDepth = loadIntValue(MAX_DEPTH, preferences.getStreamFileSearchMaxDepth());
+        } else {
+            maxDepth = preferences.getStreamFileSearchMaxDepth();
+        }
+
+        setMaxDepth(maxDepth);
+
         showAllRecordsButton.setSelection(loadBooleanValue(SHOW_RECORDS, true));
     };
 
     @Override
     protected void saveElementValues() {
+        storeValue(MAX_DEPTH, getMaxDepth());
         storeValue(SHOW_RECORDS, isShowAllRecords());
     };
+
+    /**
+     * Returns the current 'maximum depth' value of this dialog for searchung
+     * subdirectories.
+     * 
+     * @return value of the maximum depth combo box
+     */
+    private int getMaxDepth() {
+        if (Preferences.UNLIMITTED.equals(comboMaxDepth.getText())) {
+            return preferences.getStreamFileSearchMaxDepthSpecialValueUnlimited();
+        } else {
+            return IntHelper.tryParseInt(comboMaxDepth.getText(), preferences.getStreamFileSearchMaxDepth());
+        }
+    }
+
+    /**
+     * Set the maximum depth value.
+     * 
+     * @param maxDepth
+     */
+    private void setMaxDepth(int maxDepth) {
+        if (preferences.isStreamFileSearchUnlimitedMaxDepth(maxDepth)) {
+            comboMaxDepth.setText(Preferences.UNLIMITTED);
+        } else {
+            comboMaxDepth.setText(Integer.toString(maxDepth));
+        }
+    }
 
     @Override
     protected void setElementsSearchOptions(SearchOptions _searchOptions) {
         _searchOptions.setShowAllItems(isShowAllRecords());
         _searchOptions.setGenericOption(GenericSearchOption.STMF_TYPE, filterTypeCombo.getText());
+        _searchOptions.setGenericOption(GenericSearchOption.MAX_DEPTH, getMaxDepth());
     };
 
     private boolean isShowAllRecords() {
@@ -233,7 +335,7 @@ public class SearchDialog extends AbstractSearchDialog<SearchElement> {
 
     private void refreshStreamFileList(Control control) {
 
-        int autoRefreshDelay = Preferences.getInstance().getAutoRefreshDelay();
+        int autoRefreshDelay = preferences.getAutoRefreshDelay();
 
         refreshJob.cancel();
         refreshJob.setFocusControl(control);

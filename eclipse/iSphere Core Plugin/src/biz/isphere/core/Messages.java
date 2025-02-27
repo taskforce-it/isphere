@@ -990,9 +990,13 @@ public class Messages extends NLS {
 
     public static String Tooltip_Specifies_the_folder_to_save_source_file_search_results_to;
 
+    public static String Tooltip_Specifies_the_folder_to_save_stream_file_search_results_to;
+
     public static String Batch_resolve_enabled_colon;
 
     public static String Batch_resolve_enabled_Tooltip;
+
+    public static String Warning_Maximum_depth_set_to_more_than_one_level;
 
     public static String Auto_save_enabled_colon;
 
@@ -1772,6 +1776,8 @@ public class Messages extends NLS {
 
     public static String GenericSearchOption_StmF_Type;
 
+    public static String GenericSearchOption_Max_Depth;
+
     public static String Stream_file_type_colon;
 
     public static String Specifies_the_generic_type_of_the_stream_files_that_are_included_in_the_search;
@@ -1873,6 +1879,10 @@ public class Messages extends NLS {
     public static String Side_by_side_colon;
 
     public static String Tooltip_Specifies_whether_to_place_the_left_and_the_right_editors_side_by_side;
+
+    public static String Max_depth_colon;
+
+    public static String Specifies_the_maximum_depth_of_sub_directories_included_in_the_search;
 
     /*
      * Warning messages

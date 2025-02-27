@@ -85,7 +85,7 @@ public class ColorHelper {
     private static Color getSystemColor(int colorId) {
         return Display.getCurrent().getSystemColor(colorId);
     }
-    
+
     /**
      * Returns the system color used to paint background areas.
      * 
@@ -102,5 +102,32 @@ public class ColorHelper {
      */
     public static Color getBlack() {
         return getSystemColor(SWT.COLOR_BLACK);
+    }
+
+    /**
+     * Returns the default color red.
+     * 
+     * @return the default color red
+     */
+    public static Color getRed() {
+        return getSystemColor(SWT.COLOR_RED);
+    }
+
+    /**
+     * Returns the default color yellow.
+     * 
+     * @return the default color yellow
+     */
+    public static Color getYellow() {
+        return getSystemColor(SWT.COLOR_YELLOW);
+    }
+
+    /**
+     * Returns the default color orange.
+     * 
+     * @return the default color orange
+     */
+    public static Color getOrange() {
+        return SWTResourceManager.getColor(245, 141, 66);
     }
 }

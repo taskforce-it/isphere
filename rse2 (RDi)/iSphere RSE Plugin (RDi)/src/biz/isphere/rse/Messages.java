@@ -50,6 +50,8 @@ public class Messages extends NLS {
 
     public static String Enter_or_select_a_simple_or_generic_member_type;
 
+    public static String Enter_the_maximum_depth_of_subdirectories_to_be_searched;
+
     public static String Enter_or_select_an_IFS_directory;
 
     public static String Enter_or_select_a_simple_or_generic_stream_file_name;
@@ -85,6 +87,16 @@ public class Messages extends NLS {
     public static String Member_type_colon;
 
     public static String Specifies_the_generic_source_type_of_the_members_that_are_included_in_the_search;
+
+    public static String Stream_file_type_colon;
+
+    public static String Specifies_the_generic_type_of_the_stream_files_that_are_included_in_the_search;
+
+    public static String Max_depth_colon;
+
+    public static String Specifies_the_maximum_depth_of_sub_directories_included_in_the_search;
+
+    public static String Warning_Maximum_depth_set_to_more_than_one_level;
 
     public static String ShowAllRecords;
 
