@@ -212,7 +212,7 @@ e) Preferences -> Team -> SVN -> Label Decorations -> Icons Decorations
 
    Check: Outgoing changes
 
-a) Preferences -> General -> Workspace
+f) Preferences -> General -> Workspace
 
    Refresh using native hook polling (enabled)
 
@@ -222,6 +222,10 @@ a) Preferences -> General -> Workspace
    Text file encoding: UTF-8
 
    New text file line delimiter: Unix
+
+g) Preferences -> General -> Compare/Patch
+
+   Check: Ignore white space
 
 
 Useful LPEX Editor Settings (no more required for RDi 9.6+):
