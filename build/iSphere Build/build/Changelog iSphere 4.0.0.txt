@@ -1,4 +1,8 @@
 
+Changelog: iSphere 6.1.0.r
+--------------------------
+ • Add option 'Batch resolve enabled' for stream file search.
+
 Changelog: iSphere 6.0.6.r
 --------------------------
  • Fixed problem that the list of journaled objects was empty in
