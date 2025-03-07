@@ -21,7 +21,10 @@
 		<tr>
 			<td class="notice">
 						Note: For now iSphere stream file search is restricted to resolve subdirectories
-						down to 1 level, because IFS directory trees may be extremely large.</td>
+						down to 1 level, because IFS directory trees may be extremely large. This value
+						can be changed on the preferences page.<p>
+						Select <b>Batch resolve enabled</b> in the preferences to be able to change <b>max. depth</b>
+						on the iSphere search dialog.</td>
 		</tr>
 	</table>
 	<p>
@@ -92,6 +95,18 @@
 			<td valign="top">Specifies the (*generic*) file extension of
 			    the stream files that are included in the search.</td>
 		</tr>
+        <tr>
+            <td valign="top" nowrap>Maximum depth</td>
+            <td valign="top">-</td>
+            <td valign="top">Specifies the maximum depth of subdirectories included
+                in the search. Use special value -1 for an unlimited depth. But be careful.
+                IFS directory trees can grow very large.<br>
+                This value cannot be changed on the iSphere search dialog, if batch mode
+                is disabled, because the search items have already been resolved,
+                at the time the dialog is displayed. Set <b>Batch resolve enabled</b>
+                to <b>false</b>, to change the value on the search dialog.
+                (<a href="preferences/preferences.html">Preferences</a>)</td>
+        </tr>
 		<tr>
 			<td valign="top" nowrap>Show all statements</td>
 			<td valign="top">-</td>

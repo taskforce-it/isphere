@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<title>Synchronize Members Editor Performance</title>
+</head>
+
+<body>
+    <h1>Synchronize Members Editor Performance</h1>
+    <a href="https://github.com/rdi-open-source/isphere/" target="_blank">
+        <img src="assets/synchronizememberseditor.png"
+            style="float: right; margin-left: 60px; margin-right: 20px; margin-bottom: 40px"
+            border=0>
+    </a>
+    <h2>Introduction</h2>
+    Talking about performance is always difficult. Of course you can measure the
+    time a transaction takes and depending of the value the performance was good
+    or bad. But what is "good" or "bad"? That is not clearly defined and often
+    depends on personal expectations. What is "good" for one person is not necessarily
+    good for another person and vice versa.
+    <p>
+    Comparing the source code of two libraries is a lot of work. It requires the
+    following steps:
+    <ul>
+    <li>Get the source files of the libraries</li>
+    <li>Enumerate the members of each source file</li>
+    <li>Calculate and store a checksum for each member</li>
+    <li>Retrieve and store the time each member was last changed</li>
+    </ul>
+    The "iSphere Synchronize Members Editor" stores all these information in a table
+    and then downloads it to the PC. On the PC the data is evaluated and the result
+    is presented in a table.
+    <p>
+    <h2>Real Data</h2>
+    Here are some performance data that was gathered on an IBM i model "9105-42A". Feel
+    free to use it to build your opinion about the performance of the "iSphere Synchronize
+    Members Editor".
+    <table border="0">
+    <tr><td>Compared items:</td><td>2 Libraries</td></tr>
+    <tr><td>Source files per library:</td><td>27</td></tr>
+    <tr><td>Number of members of left library:</td><td>60404</td></tr>
+    <tr><td>Number of members of right library:</td><td>60125</td></tr>
+    <tr><td>Total number of members:</td><td>120529</td></tr>
+    <tr><td>Total time used in minutes:</td><td>7:15</td></tr>
+    <tr><td>Time per member in milliseconds:</td><td>3,6</td></tr>
+    </table>
+    <p>
+    In my personal opinion, 7:15 minutes is a good value, knowing that this is only 3,6
+    milliseconds per source member. How long would you need if you did that by hand?
+    <p>
+    Unfortunately I was not able to get the progress bar working well. From time to time it
+    gets stuck when the job calls the "List Database File Members" (QUSLMBR) API and spins
+    through the member list calculating the checksums. At this point I do not know the total
+    number of members in advance and therefore I can not update the progress bar properly.
+    <p>
+    But feel free to open the "Progress" view. It will not update the bar, but at least it updates
+    the number of members processed:
+    <p>
+    <img src="assets/progress-bar.png" />
+    <p>
+    By the way, the text is "Resolving generic compare items...", because technically the
+    SYNCMBR service program can use generic member names.
+    <p>
+    <h2>Changing UI Filter</h2>
+    Changing the table filter is also a relatively slow task. I was able to increase performance
+    up to a certain limit and I do not think that I can get it better. Before the optimization it
+    took up to 50 seconds to update the table filter. Now it takes between 0.5 and 5 seconds for
+    approximately 60000 lines, depending on the requested action.
+    <p>
+    <iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

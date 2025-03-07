@@ -8,39 +8,57 @@
 </head>
 
 <body>
-	<h1>Preferences</h1><b>
-	<p>
-		<img src="assets/preferences-search-streamfiles.png" align="middle">
-	<p>
-	The available stream file search options are:
-	<p>
-	<table>
-		<tr>
-			<td valign="top" nowrap>Double-click mode</td>
-			<td valign="top">-</td>
-			<td valign="top">Specifies whether the Lpex editor is started in
-				browse or edit mode, when double-clicking an IFS stream file.</td>
-		</tr>
-		<tr>
-			<td valign="top" nowrap>Save results to</td>
-			<td valign="top">-</td>
-			<td valign="top">Specifies the folder in which to save stream
-				file search results.</td>
-		</tr>
-		<tr>
-			<td valign="top" nowrap>Auto-save enabled</td>
-			<td valign="top">-</td>
-			<td valign="top">Specifies if the content of the iSphere Stream
-				File Search view is saved automatically.</td>
-		</tr>
-		<tr>
-			<td valign="top" nowrap>Auto-save file name</td>
-			<td valign="top">-</td>
-			<td valign="top">Specifies the file name where search results
-				are saved.</td>
-		</tr>
-	</table>
-	<p>
-	<iframe src="../../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+    <h1>Preferences</h1><b>
+    <p>
+        <img src="assets/preferences-search-streamfiles.png" align="middle">
+    <p>
+    The available stream file search options are:
+    <p>
+    <table>
+        <tr>
+            <td valign="top" nowrap>Batch resolve enabled</td>
+            <td valign="top">-</td>
+            <td valign="top">Specifies whether the selected stream file filters are resolved
+                before the search dialog is presented or in a batch process after
+                the search dialog has been closed for starting the search.</td>
+        </tr>
+        <tr>
+            <td valign="top" nowrap>Maximum depth</td>
+            <td valign="top">-</td>
+            <td valign="top">Specifies the maximum depth of subdirectories included
+                in the search. Use special value -1 for an unlimited depth.  But be careful.
+                IFS directory trees can grow very large.<br>
+                This value cannot be changed on the iSphere search dialog, if batch mode
+                is disabled, because the search items have already been resolved,
+                at the time the dialog is displayed. Set <b>Batch resolve enabled</b>
+                to <b>false</b>, to change the value on the search dialog.</td>
+        </tr>
+        <tr>
+            <td valign="top" nowrap>Double-click mode</td>
+            <td valign="top">-</td>
+            <td valign="top">Specifies whether the Lpex editor is started in
+                browse or edit mode, when double-clicking an IFS stream file.</td>
+        </tr>
+        <tr>
+            <td valign="top" nowrap>Save results to</td>
+            <td valign="top">-</td>
+            <td valign="top">Specifies the folder in which to save stream
+                file search results.</td>
+        </tr>
+        <tr>
+            <td valign="top" nowrap>Auto-save enabled</td>
+            <td valign="top">-</td>
+            <td valign="top">Specifies if the content of the iSphere Stream
+                File Search view is saved automatically.</td>
+        </tr>
+        <tr>
+            <td valign="top" nowrap>Auto-save file name</td>
+            <td valign="top">-</td>
+            <td valign="top">Specifies the file name where search results
+                are saved.</td>
+        </tr>
+    </table>
+    <p>
+    <iframe src="../../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
 </body>
 </html>
